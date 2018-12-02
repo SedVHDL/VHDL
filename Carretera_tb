@@ -1,0 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Test_Carretera is
+end Test_Carretera;
+
+architecture Behavioral of Test_Carretera is
+        COMPONENT Carretera
+            PORT(  rst, clk: IN std_logic;
+               FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
+               FlagIzqLado, FlagDerLado: OUT std_logic 
+            );
+            END COMPONENT;
+            SIGNAL rst_tb: std_logic;
+            SIGNAL clk_tb: std_logic:='0';
+            SIGNAL SFlagIzqPos_tb, SFlagDerPos_tb: std_logic_vector(2 downto 0);
+            SIGNAL SFlagIzqLado_tb, SFlagDerLado_tb: std_logic; 
+BEGIN
+uut: Carretera PORT MAP(
+        rst => rst_tb,
+        clk => clk_tb,
+        FlagIzqPos => SFlagIzqPos_tb,
+        FlagDerPos => SFlagDerPos_tb,
+        FlagIzqLado => SFlagIzqLado_tb,
+        FlagDerLado => SFlagDerLado_tb
+);
+
+clk_tb <= not clk_tb after 50ns;
+
+PROCESS
+BEGIN 
+
+END PROCESS;
+
+
+end Behavioral;
