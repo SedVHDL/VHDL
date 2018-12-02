@@ -1,14 +1,16 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity TOP is
+entity TOP is --En esta entidad pondremos todos los componentes y sus respectivas instanciaciones.
         PORT(
             clk, rst: IN std_logic;
             botonIraw, botonDraw: IN std_logic;
             Segmentos, Selector: OUT std_logic_vector (7 downto 0));
 end TOP;
 
-architecture Behavioral of TOP is
+architecture Behavioral of TOP is 
+
+--SEÑALES
 
     SIGNAL flagIpos: Std_logic_vector (2 downto 0);
     SIGNAL flagDpos: Std_logic_vector (2 downto 0);
@@ -20,6 +22,8 @@ architecture Behavioral of TOP is
     SIGNAL syncD: std_logic;
     SIGNAL botonI: std_logic;
     SIGNAL botonD: std_logic;
+    
+--COMPONENTES
     
     COMPONENT Sincronizador is
             PORT(
@@ -79,6 +83,8 @@ architecture Behavioral of TOP is
                  
                  
 begin
+
+--INSTANCIACIONES
 
 INST_SincronizadorI: Sincronizador PORT MAP(
                 sync_in => botonIraw,
