@@ -10,13 +10,25 @@ entity Carretera is
 end Carretera;
 
 architecture Behavioral of Carretera is
-    SIGNAL SFlagIzqPos, SFlagDerPos: std_logic_vector(2 downto 0);
-    SIGNAL SFlagIzqLado, SFlagDerLado: std_logic; 
+
+COMPONENT ClockDisplay is
+port (
+    clk: in STD_LOGIC;
+    Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+);
+END COMPONENT;
+
+SIGNAL SFlagIzqPos, SFlagDerPos: std_logic_vector(2 downto 0);
+SIGNAL SFlagIzqLado, SFlagDerLado: std_logic; 
+SIGNAL SelectorD: STD_LOGIC_VECTOR(2 DOWNTO 0);
+
 BEGIN
+
+
 PROCESS
 BEGIN
 
-IF rst='1' THEN
+IF rst='0' THEN
 --Primera iteración
 
 FlagDerPos <= "000";
@@ -26,7 +38,7 @@ FlagIzqLado <= '0';
 
 --WAIT for 3000 ms;
 
-ELSIF rst/='1' THEN
+ELSIF rst/='0' THEN
 
 FlagDerPos <= "000";
 FlagDerLado <= '1';
@@ -35,95 +47,95 @@ FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
---Segunda iteración
+----Segunda iteración
 
-FlagDerPos <= "000";
-FlagDerLado <= '0';
-FlagIzqPos <= "011";
-FlagIzqLado <= '1';
+--FlagDerPos <= "000";
+--FlagDerLado <= '0';
+--FlagIzqPos <= "011";
+--FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Tercera iteración
+----Tercera iteración
 
-FlagDerPos <= "001";
-FlagDerLado <= '1';
-FlagIzqPos <= "011";
-FlagIzqLado <= '0';
+--FlagDerPos <= "001";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "011";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Cuarta iteración
+----Cuarta iteración
 
-FlagDerPos <= "001";
-FlagDerLado <= '0';
-FlagIzqPos <= "100";
-FlagIzqLado <= '1';
+--FlagDerPos <= "001";
+--FlagDerLado <= '0';
+--FlagIzqPos <= "100";
+--FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Quinta iteración
+----Quinta iteración
 
-FlagDerPos <= "010";
-FlagDerLado <= '1';
-FlagIzqPos <= "100";
-FlagIzqLado <= '0';
+--FlagDerPos <= "010";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "100";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Sexta iteración
+----Sexta iteración
 
-FlagDerPos <= "010";
-FlagDerLado <= '0';
-FlagIzqPos <= "101";
-FlagIzqLado <= '1';
+--FlagDerPos <= "010";
+--FlagDerLado <= '0';
+--FlagIzqPos <= "101";
+--FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Séptima iteración
+----Séptima iteración
 
-FlagDerPos <= "011";
-FlagDerLado <= '1';
-FlagIzqPos <= "101";
-FlagIzqLado <= '0';
+--FlagDerPos <= "011";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "101";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Octava iteración
+----Octava iteración
 
-FlagDerPos <= "011";
-FlagDerLado <= '0';
-FlagIzqPos <= "110";
-FlagIzqLado <= '1';
+--FlagDerPos <= "011";
+--FlagDerLado <= '0';
+--FlagIzqPos <= "110";
+--FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Novena iteración
+----Novena iteración
 
-FlagDerPos <= "100";
-FlagDerLado <= '1';
-FlagIzqPos <= "110";
-FlagIzqLado <= '0';
+--FlagDerPos <= "100";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "110";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Décima iteración
+----Décima iteración
 
-FlagDerPos <= "100";
-FlagDerLado <= '0';
-FlagIzqPos <= "111";
-FlagIzqLado <= '1';
+--FlagDerPos <= "100";
+--FlagDerLado <= '0';
+--FlagIzqPos <= "111";
+--FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Undécima iteración
+----Undécima iteración
 
-FlagDerPos <= "101";
-FlagDerLado <= '1';
-FlagIzqPos <= "111";
-FlagIzqLado <= '0';
+--FlagDerPos <= "101";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "111";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
 END IF;
 END PROCESS;
@@ -131,6 +143,3 @@ END PROCESS;
 --FlagDerPos <= SFlagDerPos;
 --FlagDerPos <= SFlagDerPos;
 --FlagDerPos <= SFlagDerPos;
---FlagDerPos <= SFlagDerPos;
-
-end Behavioral;
