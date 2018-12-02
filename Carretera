@@ -25,8 +25,9 @@ SIGNAL SelectorD: STD_LOGIC_VECTOR(2 DOWNTO 0);
 BEGIN
 
 inst_clkparedes: ClockDisplay
-                 GENERIC MAP (N => 3000000000)
-                 PORT MAP( Selector => SelectorD); 
+                 GENERIC MAP (TIMER => 300000000)
+                 PORT MAP( Selector => SelectorD,
+                           clk => clk); 
 PROCESS (clk, rst)
 BEGIN
 
@@ -40,7 +41,7 @@ FlagIzqLado <= '0';
 
 --WAIT for 3000 ms;
 
-ELSIF rst/='1' THEN
+ELSIF rst/='0' THEN
       CASE SelectorD IS --case para mover automáticamente las paredes
           WHEN "000" =>
                 FlagDerPos <= "000";
@@ -82,7 +83,8 @@ ELSIF rst/='1' THEN
                 FlagDerLado <= '0';
                 FlagIzqPos <= "110";
                 FlagIzqLado <= '1';
-
+          WHEN others =>
+END CASE;
 --WAIT for 3000 ms;
 
 ----Novena iteración
@@ -114,7 +116,4 @@ ELSIF rst/='1' THEN
 
 END IF;
 END PROCESS;
-
---FlagDerPos <= SFlagDerPos;
---FlagDerPos <= SFlagDerPos;
---FlagDerPos <= SFlagDerPos;
+END ARCHITECTURE;

@@ -1,3 +1,4 @@
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -75,7 +76,7 @@ architecture Behavioral of TOP is
     END COMPONENT;
     
     COMPONENT ClockDisplay is
-            GENERIC MAP (TIMER => 250000);
+            GENERIC(TIMER: integer);
             PORT(
                 clk: in STD_LOGIC;
                 Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
@@ -124,7 +125,9 @@ INST_Carretera: Carretera PORT MAP(
                 FlagIzqLado => flagIlado,
                 FlagDerLado => flagDlado
                 );  
-INST_ClockDisplay: ClockDisplay PORT MAP(
+INST_ClockDisplay: ClockDisplay 
+                GENERIC MAP (TIMER => 250000)
+                PORT MAP(
                 clk => clk,
                 Selector => selector_aux
                 );
