@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Carretera is
   PORT( 
         rst, clk: IN std_logic;
-        FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
+        FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0); --Definimos 4 salidas, dos para las dos posiciones de las paredes y otras dos para, dentro de cada posición, el ladoi izquierdo o derecho de cada pared.
         FlagIzqLado, FlagDerLado: OUT std_logic 
   );
 end Carretera;
@@ -28,7 +28,7 @@ BEGIN
 PROCESS
 BEGIN
 
-IF rst='0' THEN
+IF rst='0' THEN --Con el reset regresamos el reset a la primera posición definida
 --Primera iteración
 
 FlagDerPos <= "000";
@@ -38,7 +38,7 @@ FlagIzqLado <= '0';
 
 --WAIT for 3000 ms;
 
-ELSIF rst/='0' THEN
+ELSIF rst/='0' THEN --Mientras no se pulse el botón de reset, queremos que las paredes se sigan moviendo.
 
 FlagDerPos <= "000";
 FlagDerLado <= '1';
