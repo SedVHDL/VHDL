@@ -75,6 +75,7 @@ architecture Behavioral of TOP is
     END COMPONENT;
     
     COMPONENT ClockDisplay is
+            GENERIC MAP (TIMER => 250000);
             PORT(
                 clk: in STD_LOGIC;
                 Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
