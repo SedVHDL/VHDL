@@ -1,0 +1,13 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Carretera is
+
+end Carretera;
+
+architecture Behavioral of Carretera is
+
+begin
+
+
+end Behavioral;
