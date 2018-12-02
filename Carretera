@@ -2,12 +2,125 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity Carretera is
-
+  PORT(
+        rst, clk: IN std_logic;
+        FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
+        FlagIzqLado, FlagDerLado: OUT std_logic 
+  );
 end Carretera;
 
 architecture Behavioral of Carretera is
+    SIGNAL SFlagIzqPos, SFlagDerPos: std_logic_vector(2 downto 0);
+    SIGNAL SFlagIzqLado, SFlagDerLado: std_logic; 
+BEGIN
+PROCESS
+BEGIN
 
-begin
+--Primera iteración
 
+SFlagDerPos <= "000";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "010";
+SFlagIzqLado <= '0';
+
+WAIT for 3000 ms;
+
+--Segunda iteración
+
+SFlagDerPos <= "000";
+SFlagDerLado <= '0';
+SFlagIzqPos <= "011";
+SFlagIzqLado <= '1';
+
+WAIT for 3000 ms;
+
+--Tercera iteración
+
+SFlagDerPos <= "001";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "011";
+SFlagIzqLado <= '0';
+
+WAIT for 3000 ms;
+
+--Cuarta iteración
+
+SFlagDerPos <= "001";
+SFlagDerLado <= '0';
+SFlagIzqPos <= "100";
+SFlagIzqLado <= '1';
+
+WAIT for 3000 ms;
+
+--Quinta iteración
+
+SFlagDerPos <= "010";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "100";
+SFlagIzqLado <= '0';
+
+WAIT for 3000 ms;
+
+--Sexta iteración
+
+SFlagDerPos <= "010";
+SFlagDerLado <= '0';
+SFlagIzqPos <= "101";
+SFlagIzqLado <= '1';
+
+WAIT for 3000 ms;
+
+--Séptima iteración
+
+SFlagDerPos <= "011";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "101";
+SFlagIzqLado <= '0';
+
+WAIT for 3000 ms;
+
+--Octava iteración
+
+SFlagDerPos <= "011";
+SFlagDerLado <= '0';
+SFlagIzqPos <= "110";
+SFlagIzqLado <= '1';
+
+WAIT for 3000 ms;
+
+--Novena iteración
+
+SFlagDerPos <= "100";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "110";
+SFlagIzqLado <= '0';
+
+WAIT for 3000 ms;
+
+--Décima iteración
+
+SFlagDerPos <= "100";
+SFlagDerLado <= '0';
+SFlagIzqPos <= "111";
+SFlagIzqLado <= '1';
+
+WAIT for 3000 ms;
+
+--Undécima iteración
+
+SFlagDerPos <= "101";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "111";
+SFlagIzqLado <= '0';
+
+WAIT for 3000 ms;
+
+
+END PROCESS;
+
+--FlagDerPos <= SFlagDerPos;
+--FlagDerPos <= SFlagDerPos;
+--FlagDerPos <= SFlagDerPos;
+--FlagDerPos <= SFlagDerPos;
 
 end Behavioral;
