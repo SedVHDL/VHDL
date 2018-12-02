@@ -1,1 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity FlagCoche is
+      Port (
+            clk, rst: IN STD_LOGIC;
+            BotonIzq, BotonDer: IN STD_LOGIC;
+            FlagC: OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
+       );
+end FlagCoche;
+
+architecture Behavioral of FlagCoche is
+
+SIGNAL FlagC_aux: UNSIGNED (2 DOWNTO 0) := "000";
+
+begin
+
+PROCESS (Clk)
+BEGIN
+    IF (rst = '1') THEN
+        FlagC_aux <= "000";
+        ELSIF(clk'event AND clk = '1') THEN
+            IF (BotonIzq = '1' AND BotonDer = '0') THEN
+                FlagC_aux <= FlagC_aux + 1;
+            ELSIF (BotonIzq = '0' AND BotonDer = '1') THEN
+                FlagC_aux <= FlagC_aux - 1;
+            END IF;
+    END IF;
+END PROCESS;
+
+FlagC <= std_logic_vector(FlagC_aux);
+
+end Behavioral;
 
