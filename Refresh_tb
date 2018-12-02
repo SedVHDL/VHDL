@@ -1,0 +1,118 @@
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity refresh_tb is
+end refresh_tb;
+
+architecture Behavioral of refresh_tb is
+
+COMPONENT refresh IS
+    Port (
+        clk: IN STD_LOGIC;
+        rst: IN STD_LOGIC;
+        flagC: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de posicion del coche.
+        flagIpos: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite izquierdo).
+        flagDpos: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite derecho).
+        flagIlado: IN STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado izquierdo).
+        flagDlado: IN STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado derecho).
+        SelectorIN: IN STD_LOGIC_VECTOR(2 DOWNTO 0);  -- El selector que entra al controlador en formato de 3 bits.
+        SelectorOUT: OUT STD_LOGIC_VECTOR(7 DOWNTO 0); --Señal de selector para Constraits.
+        Segmentos: OUT STD_LOGIC_VECTOR(7 DOWNTO 0) --Señal de segmentos para Constraits.
+         );
+END COMPONENT;
+
+SIGNAL clk_tb: STD_LOGIC:='0';
+SIGNAL rst_tb: STD_LOGIC;
+SIGNAL flagC_tb: STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de posicion del coche.
+SIGNAL flagIpos_tb: STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite izquierdo).
+SIGNAL flagDpos_tb: STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite derecho).
+SIGNAL flagIlado_tb: STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado izquierdo).
+SIGNAL flagDlado_tb: STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado derecho).
+SIGNAL SelectorIN_tb: STD_LOGIC_VECTOR(2 DOWNTO 0);  -- El selector que entra al controlador en formato de 3 bits.
+SIGNAL SelectorOUT_tb: STD_LOGIC_VECTOR(7 DOWNTO 0); --Señal de selector para Constraits.
+SIGNAL Segmentos_tb: STD_LOGIC_VECTOR(7 DOWNTO 0);
+
+begin
+
+uut: refresh PORT MAP(
+            clk => clk_tb,
+            rst => rst_tb,
+            flagC => flagC_tb,
+            flagIpos => flagIpos_tb,
+            flagDpos => flagDpos_tb,
+            flagIlado => flagIlado_tb,
+            flagDlado => flagDlado_tb,
+            SelectorIN => SelectorIN_tb,
+            SelectorOUT => SelectorOUT_tb,
+            Segmentos => Segmentos_tb
+            );
+            
+clk_tb <= not clk_tb after 200ns;
+rst_tb <='0';
+
+PROCESS
+    BEGIN
+    flagC_tb <= "001";
+    flagDpos_tb <= "000";
+    flagDlado_tb <= '1';
+    flagIpos_tb <= "010";
+    flagIlado_tb <= '0';
+    
+    wait for 2000 ms;
+    
+    flagC_tb <= "010";
+    
+    wait for 2000 ms;
+    
+    flagDpos_tb <= "000";
+    flagDlado_tb <= '0';
+    flagIpos_tb <= "011";
+    flagIlado_tb <= '1';
+         
+    wait for 2000 ms;
+    
+    flagDpos_tb <= "001";
+    flagDlado_tb <= '1';
+    flagIpos_tb <= "011";
+    flagIlado_tb <= '0';
+    
+    wait for 2000ms;
+    
+    flagDpos_tb <= "001";
+    flagDlado_tb <= '0';
+    flagIpos_tb <= "100";
+    flagIlado_tb <= '1';
+    
+    wait for 2000ms;
+    
+    flagDpos_tb <= "010";
+    flagDlado_tb <= '1';
+    flagIpos_tb <= "100";
+    flagIlado_tb <= '0';
+    
+    wait;
+    
+END PROCESS;
+
+
+PROCESS --process que simula el comportamiento de la entidad ClockDisplay
+    BEGIN
+    SelectorIN_tb <= "000";
+    wait for 1000 ms;
+    SelectorIN_tb <= "001";
+    wait for 1000 ms;
+    SelectorIN_tb <= "010";
+    wait for 1000 ms;
+    SelectorIN_tb <= "011";
+    wait for 1000 ms;
+    SelectorIN_tb <= "100";
+    wait for 1000 ms;
+    SelectorIN_tb <= "101";
+    wait for 1000 ms;
+    SelectorIN_tb <= "110";
+    wait for 1000 ms;
+    SelectorIN_tb <= "111";
+    wait for 1000 ms;    
+END PROCESS;
+end Behavioral;
