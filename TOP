@@ -1,3 +1,4 @@
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -135,3 +136,14 @@ INST_Refresh: Refresh PORT MAP(
                rst => rst,
                flagC => flagC,
                flagIpos =>  flagIpos,
+               flagDpos => flagDpos,
+               flagIlado => flagIlado,
+               flagDlado => flagDlado,
+               SelectorIN => selector_aux,
+               SelectorOUT => Selector,
+               Segmentos => Segmentos
+                );
+
+
+
+end Behavioral;
