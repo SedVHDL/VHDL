@@ -16,112 +16,112 @@ BEGIN
 PROCESS
 BEGIN
 
-IF (rst='1') THEN
+IF rst='1' THEN
 --Primera iteración
 
-SFlagDerPos <= "000";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "010";
-SFlagIzqLado <= '0';
+FlagDerPos <= "000";
+FlagDerLado <= '1';
+FlagIzqPos <= "010";
+FlagIzqLado <= '0';
 
 --WAIT for 3000 ms;
 
-ELSIF (rst/='1') THEN
+ELSIF rst/='1' THEN
 
-SFlagDerPos <= "000";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "010";
-SFlagIzqLado <= '0';
+FlagDerPos <= "000";
+FlagDerLado <= '1';
+FlagIzqPos <= "010";
+FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
 --Segunda iteración
 
-SFlagDerPos <= "000";
-SFlagDerLado <= '0';
-SFlagIzqPos <= "011";
-SFlagIzqLado <= '1';
+FlagDerPos <= "000";
+FlagDerLado <= '0';
+FlagIzqPos <= "011";
+FlagIzqLado <= '1';
 
 WAIT for 3000 ms;
 
 --Tercera iteración
 
-SFlagDerPos <= "001";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "011";
-SFlagIzqLado <= '0';
+FlagDerPos <= "001";
+FlagDerLado <= '1';
+FlagIzqPos <= "011";
+FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
 --Cuarta iteración
 
-SFlagDerPos <= "001";
-SFlagDerLado <= '0';
-SFlagIzqPos <= "100";
-SFlagIzqLado <= '1';
+FlagDerPos <= "001";
+FlagDerLado <= '0';
+FlagIzqPos <= "100";
+FlagIzqLado <= '1';
 
 WAIT for 3000 ms;
 
 --Quinta iteración
 
-SFlagDerPos <= "010";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "100";
-SFlagIzqLado <= '0';
+FlagDerPos <= "010";
+FlagDerLado <= '1';
+FlagIzqPos <= "100";
+FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
 --Sexta iteración
 
-SFlagDerPos <= "010";
-SFlagDerLado <= '0';
-SFlagIzqPos <= "101";
-SFlagIzqLado <= '1';
+FlagDerPos <= "010";
+FlagDerLado <= '0';
+FlagIzqPos <= "101";
+FlagIzqLado <= '1';
 
 WAIT for 3000 ms;
 
 --Séptima iteración
 
-SFlagDerPos <= "011";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "101";
-SFlagIzqLado <= '0';
+FlagDerPos <= "011";
+FlagDerLado <= '1';
+FlagIzqPos <= "101";
+FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
 --Octava iteración
 
-SFlagDerPos <= "011";
-SFlagDerLado <= '0';
-SFlagIzqPos <= "110";
-SFlagIzqLado <= '1';
+FlagDerPos <= "011";
+FlagDerLado <= '0';
+FlagIzqPos <= "110";
+FlagIzqLado <= '1';
 
 WAIT for 3000 ms;
 
 --Novena iteración
 
-SFlagDerPos <= "100";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "110";
-SFlagIzqLado <= '0';
+FlagDerPos <= "100";
+FlagDerLado <= '1';
+FlagIzqPos <= "110";
+FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
 --Décima iteración
 
-SFlagDerPos <= "100";
-SFlagDerLado <= '0';
-SFlagIzqPos <= "111";
-SFlagIzqLado <= '1';
+FlagDerPos <= "100";
+FlagDerLado <= '0';
+FlagIzqPos <= "111";
+FlagIzqLado <= '1';
 
 WAIT for 3000 ms;
 
 --Undécima iteración
 
-SFlagDerPos <= "101";
-SFlagDerLado <= '1';
-SFlagIzqPos <= "111";
-SFlagIzqLado <= '0';
+FlagDerPos <= "101";
+FlagDerLado <= '1';
+FlagIzqPos <= "111";
+FlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
@@ -134,4 +134,3 @@ END PROCESS;
 --FlagDerPos <= SFlagDerPos;
 
 end Behavioral;
-
