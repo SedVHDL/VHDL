@@ -1,0 +1,74 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+
+entity FlagCoche_tb is
+--  Port ( );
+end FlagCoche_tb;
+
+architecture Behavioral of FlagCoche_tb is
+
+COMPONENT FlagCoche is
+      Port (
+            clk, rst: IN STD_LOGIC;
+            BotonIzq, BotonDer: IN STD_LOGIC;
+            FlagC: OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
+       );
+end COMPONENT;
+
+SIGNAL clk_tb, rst_tb: STD_LOGIC := '0';
+SIGNAL BotonI_tb, BotonD_tb: STD_LOGIC := '0';
+SIGNAL FlagC_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
+
+BEGIN
+
+inst_Flag: FlagCoche PORT MAP (
+                    
+             clk => clk_tb,
+             rst => rst_tb,
+             BotonIzq => BotonI_tb,
+             BotonDer => BotonD_tb,
+             FlagC => FlagC_tb      
+);
+
+rst_tb <= '1', '0' after 50 ns;
+clk_tb <= not (clk_tb) after 50 ns;
+
+PROCESS
+BEGIN
+
+wait for 10 ns;
+
+BotonI_tb <= '1';
+BotonD_tb <= '0';
+
+wait for 100 ns;
+
+BotonI_tb <= '1';
+BotonD_tb <= '0';
+
+wait for 100 ns;
+
+BotonI_tb <= '1';
+BotonD_tb <= '0';
+
+wait for 100 ns;
+
+BotonI_tb <= '0';
+BotonD_tb <= '1';
+
+wait for 100 ns;
+
+BotonI_tb <= '0';
+BotonD_tb <= '1';
+
+wait for 100 ns;
+
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+wait for 100 ns;
+
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+END PROCESS;
+end Behavioral;
