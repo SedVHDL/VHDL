@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity Carretera is
-  PORT(
+  PORT( 
         rst, clk: IN std_logic;
         FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
         FlagIzqLado, FlagDerLado: OUT std_logic 
@@ -16,7 +16,17 @@ BEGIN
 PROCESS
 BEGIN
 
+IF (rst='1') THEN
 --Primera iteración
+
+SFlagDerPos <= "000";
+SFlagDerLado <= '1';
+SFlagIzqPos <= "010";
+SFlagIzqLado <= '0';
+
+--WAIT for 3000 ms;
+
+ELSIF (rst/='1') THEN
 
 SFlagDerPos <= "000";
 SFlagDerLado <= '1';
@@ -115,7 +125,7 @@ SFlagIzqLado <= '0';
 
 WAIT for 3000 ms;
 
-
+END IF;
 END PROCESS;
 
 --FlagDerPos <= SFlagDerPos;
@@ -124,3 +134,4 @@ END PROCESS;
 --FlagDerPos <= SFlagDerPos;
 
 end Behavioral;
+
