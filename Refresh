@@ -27,30 +27,30 @@ BEGIN
  IF (clk'event AND clk = '1') THEN
     IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
         IF(flagIlado = '0') THEN
-            Segmentos <= "10001111";  -- ":-"
+            Segmentos <= "11111000";  -- ":-"
         ELSE
             Segmentos <= "11111111"; --GAMEOVER
         END IF;
     ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
         IF(flagIlado = '0') THEN
-            Segmentos <= "10111001"; -- "-:"
+            Segmentos <= "11001110"; -- "-:"
         ELSE
             Segmentos <= "11111111"; --GAMEOVER
         END IF;
     ELSIF (SelectorIN = flagIpos AND SelectorIN /= flagC ) THEN
         IF (flagIlado = '1') THEN
-            Segmentos <= "11111001";
+            Segmentos <= "11001111"; -- ":" derecho
         ELSE
-            Segmentos <= "11001111";
+            Segmentos <= "11111001"; -- ":" izquierdo
         END IF;
     ELSIF (SelectorIN = flagDpos AND SelectorIN /= flagC ) THEN
-                IF (flagDlado = '1') THEN
-                    Segmentos <= "11111001";
-                ELSE
-                    Segmentos <= "11001111";
-                END IF;
+        IF (flagDlado = '1') THEN
+            Segmentos <= "11001111"; -- ":" derecho
+        ELSE
+            Segmentos <= "11111001"; -- ":" izquierdo
+        END IF;                   
     ELSIF (SelectorIN = flagC) THEN
-        Segmentos <= "10111111";
+        Segmentos <= "11111110"; -- " - " coche
     ELSE
         Segmentos <= "11111111";
     END IF;

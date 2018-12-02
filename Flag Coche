@@ -13,20 +13,20 @@ end FlagCoche;
 
 architecture Behavioral of FlagCoche is
 
-SIGNAL FlagC_aux: UNSIGNED (2 DOWNTO 0) := "000";
+SIGNAL FlagC_aux: UNSIGNED (2 DOWNTO 0) := "001";
 
 begin
 
 PROCESS (Clk)
 BEGIN
-    IF (rst = '1') THEN
-        FlagC_aux <= "000";
-        ELSIF(clk'event AND clk = '1') THEN
-            IF (BotonIzq = '1' AND BotonDer = '0') THEN
-                FlagC_aux <= FlagC_aux + 1;
-            ELSIF (BotonIzq = '0' AND BotonDer = '1') THEN
-                FlagC_aux <= FlagC_aux - 1;
-            END IF;
+    IF (rst = '0') THEN
+        FlagC_aux <= "001";
+    ELSIF(clk'event AND clk = '1') THEN
+        IF (BotonIzq = '1' AND BotonDer = '0') THEN
+            FlagC_aux <= FlagC_aux + 1;
+        ELSIF (BotonIzq = '0' AND BotonDer = '1') THEN
+            FlagC_aux <= FlagC_aux - 1;
+        END IF;
     END IF;
 END PROCESS;
 

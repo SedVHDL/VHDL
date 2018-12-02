@@ -1,1 +1,145 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
 
+entity TOP is --En esta entidad pondremos todos los componentes y sus respectivas instanciaciones.
+        PORT(
+            clk, rst: IN std_logic;
+            botonIraw, botonDraw: IN std_logic;
+            Segmentos, Selector: OUT std_logic_vector (7 downto 0));
+end TOP;
+
+architecture Behavioral of TOP is 
+
+--SEÑALES
+
+    SIGNAL flagIpos: Std_logic_vector (2 downto 0);
+    SIGNAL flagDpos: Std_logic_vector (2 downto 0);
+    SIGNAL flagIlado: std_logic;
+    SIGNAL flagDlado: std_logic;
+    SIGNAL flagC: std_logic_vector (2 downto 0);
+    SIGNAL selector_aux: Std_logic_vector (2 downto 0);
+    SIGNAL syncI: std_logic;
+    SIGNAL syncD: std_logic;
+    SIGNAL botonI: std_logic;
+    SIGNAL botonD: std_logic;
+    
+--COMPONENTES
+    
+    COMPONENT Sincronizador is
+            PORT(
+                 sync_in: IN STD_LOGIC;
+                 clk: IN STD_LOGIC;
+                 sync_out: OUT STD_LOGIC
+                 );
+                 
+     END COMPONENT;
+     
+     COMPONENT Debouncer is
+            PORT(
+                clk: in std_logic;
+                rst: IN STD_LOGIC;
+                btn_in: IN STD_LOGIC;
+                btn_out: OUT STD_LOGIC
+                );
+     END COMPONENT;
+     
+     COMPONENT FlagCoche is
+            PORT(
+               clk, rst: IN STD_LOGIC;
+               BotonIzq, BotonDer: IN STD_LOGIC;
+               FlagC: OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
+               );
+     END COMPONENT;
+     
+     COMPONENT Carretera is
+            PORT(
+               rst, clk: IN std_logic;
+               FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
+               FlagIzqLado, FlagDerLado: OUT std_logic 
+               );
+    END COMPONENT;
+    
+    COMPONENT Refresh is
+            PORT(
+               clk: IN STD_LOGIC;
+               rst: IN STD_LOGIC;
+               flagC: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de posicion del coche.
+               flagIpos: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite izquierdo).
+               flagDpos: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite derecho).
+               flagIlado: IN STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado izquierdo).
+               flagDlado: IN STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado derecho).
+               SelectorIN: IN STD_LOGIC_VECTOR(2 DOWNTO 0);  -- El selector que entra al controlador en formato de 3 bits.
+               SelectorOUT: OUT STD_LOGIC_VECTOR(7 DOWNTO 0); --Señal de selector para Constraits.
+               Segmentos: OUT STD_LOGIC_VECTOR(7 DOWNTO 0) --Señal de segmentos para Constraits.
+               );
+    END COMPONENT;
+    
+    COMPONENT ClockDisplay is
+            PORT(
+                clk: in STD_LOGIC;
+                Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+            );
+    END COMPONENT;
+                 
+                 
+begin
+
+--INSTANCIACIONES
+
+INST_SincronizadorI: Sincronizador PORT MAP(
+                sync_in => botonIraw,
+                clk => clk,
+                sync_out => syncI
+                );
+INST_SincronizadorD: Sincronizador PORT MAP(
+                sync_in => botonDraw,
+                clk => clk,
+                sync_out => syncD
+                );
+INST_DebouncerI: Debouncer PORT MAP(
+                clk => clk,
+                rst => rst,
+                btn_in => syncI,
+                btn_out => botonI
+                );
+INST_DebouncerD: Debouncer PORT MAP(
+                clk => clk,
+                rst => rst,
+                btn_in => syncD,
+                btn_out => botonD
+                );
+INST_FlagCoche: FlagCoche PORT MAP(
+                clk => clk,
+                rst => rst,
+                BotonIzq => botonI,
+                BotonDer => botonD,
+                FlagC => flagC
+                );
+INST_Carretera: Carretera PORT MAP(
+                clk => clk,
+                rst => rst,
+                FlagIzqPos => flagIpos,
+                FlagDerPos => flagDpos,
+                FlagIzqLado => flagIlado,
+                FlagDerLado => flagDlado
+                );  
+INST_ClockDisplay: ClockDisplay PORT MAP(
+                clk => clk,
+                Selector => selector_aux
+                );
+INST_Refresh: Refresh PORT MAP(
+               clk => clk,
+               rst => rst,
+               flagC => flagC,
+               flagIpos =>  flagIpos,
+               flagDpos => flagDpos,
+               flagIlado => flagIlado,
+               flagDlado => flagDlado,
+               SelectorIN => selector_aux,
+               SelectorOUT => Selector,
+               Segmentos => Segmentos
+                );
+
+
+
+end Behavioral;

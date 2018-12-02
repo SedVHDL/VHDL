@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Carretera is
   PORT( 
         rst, clk: IN std_logic;
-        FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
+        FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0); --Definimos 4 salidas, dos para las dos posiciones de las paredes y otras dos para, dentro de cada posición, el ladoi izquierdo o derecho de cada pared.
         FlagIzqLado, FlagDerLado: OUT std_logic 
   );
 end Carretera;
@@ -12,7 +12,7 @@ end Carretera;
 architecture Behavioral of Carretera is
 
 COMPONENT ClockDisplay is
-generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
+generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES;
 port (
     clk: in STD_LOGIC;
     Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
@@ -30,7 +30,7 @@ inst_clkparedes: ClockDisplay
 PROCESS (clk, rst)
 BEGIN
 
-IF rst='1' THEN
+IF rst='0' THEN --Con el reset regresamos el reset a la primera posición definida
 --Primera iteración
 
 FlagDerPos <= "000";
@@ -83,34 +83,34 @@ ELSIF rst/='1' THEN
                 FlagIzqPos <= "110";
                 FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Novena iteración
+----Novena iteración
 
-FlagDerPos <= "100";
-FlagDerLado <= '1';
-FlagIzqPos <= "110";
-FlagIzqLado <= '0';
+--FlagDerPos <= "100";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "110";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Décima iteración
+----Décima iteración
 
-FlagDerPos <= "100";
-FlagDerLado <= '0';
-FlagIzqPos <= "111";
-FlagIzqLado <= '1';
+--FlagDerPos <= "100";
+--FlagDerLado <= '0';
+--FlagIzqPos <= "111";
+--FlagIzqLado <= '1';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
---Undécima iteración
+----Undécima iteración
 
-FlagDerPos <= "101";
-FlagDerLado <= '1';
-FlagIzqPos <= "111";
-FlagIzqLado <= '0';
+--FlagDerPos <= "101";
+--FlagDerLado <= '1';
+--FlagIzqPos <= "111";
+--FlagIzqLado <= '0';
 
-WAIT for 3000 ms;
+--WAIT for 3000 ms;
 
 END IF;
 END PROCESS;
@@ -118,6 +118,3 @@ END PROCESS;
 --FlagDerPos <= SFlagDerPos;
 --FlagDerPos <= SFlagDerPos;
 --FlagDerPos <= SFlagDerPos;
---FlagDerPos <= SFlagDerPos;
-
-end Behavioral;
