@@ -12,6 +12,7 @@ end Carretera;
 architecture Behavioral of Carretera is
 
 COMPONENT ClockDisplay is
+generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES;
 port (
     clk: in STD_LOGIC;
     Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
@@ -21,11 +22,12 @@ END COMPONENT;
 SIGNAL SFlagIzqPos, SFlagDerPos: std_logic_vector(2 downto 0);
 SIGNAL SFlagIzqLado, SFlagDerLado: std_logic; 
 SIGNAL SelectorD: STD_LOGIC_VECTOR(2 DOWNTO 0);
-
 BEGIN
 
-
-PROCESS
+inst_clkparedes: ClockDisplay
+                 GENERIC MAP (N => 3000000000)
+                 PORT MAP( Selector => SelectorD); 
+PROCESS (clk, rst)
 BEGIN
 
 IF rst='0' THEN --Con el reset regresamos el reset a la primera posición definida
@@ -38,75 +40,48 @@ FlagIzqLado <= '0';
 
 --WAIT for 3000 ms;
 
-ELSIF rst/='0' THEN --Mientras no se pulse el botón de reset, queremos que las paredes se sigan moviendo.
-
-FlagDerPos <= "000";
-FlagDerLado <= '1';
-FlagIzqPos <= "010";
-FlagIzqLado <= '0';
-
-WAIT for 3000 ms;
-
-----Segunda iteración
-
---FlagDerPos <= "000";
---FlagDerLado <= '0';
---FlagIzqPos <= "011";
---FlagIzqLado <= '1';
-
---WAIT for 3000 ms;
-
-----Tercera iteración
-
---FlagDerPos <= "001";
---FlagDerLado <= '1';
---FlagIzqPos <= "011";
---FlagIzqLado <= '0';
-
---WAIT for 3000 ms;
-
-----Cuarta iteración
-
---FlagDerPos <= "001";
---FlagDerLado <= '0';
---FlagIzqPos <= "100";
---FlagIzqLado <= '1';
-
---WAIT for 3000 ms;
-
-----Quinta iteración
-
---FlagDerPos <= "010";
---FlagDerLado <= '1';
---FlagIzqPos <= "100";
---FlagIzqLado <= '0';
-
---WAIT for 3000 ms;
-
-----Sexta iteración
-
---FlagDerPos <= "010";
---FlagDerLado <= '0';
---FlagIzqPos <= "101";
---FlagIzqLado <= '1';
-
---WAIT for 3000 ms;
-
-----Séptima iteración
-
---FlagDerPos <= "011";
---FlagDerLado <= '1';
---FlagIzqPos <= "101";
---FlagIzqLado <= '0';
-
---WAIT for 3000 ms;
-
-----Octava iteración
-
---FlagDerPos <= "011";
---FlagDerLado <= '0';
---FlagIzqPos <= "110";
---FlagIzqLado <= '1';
+ELSIF rst/='1' THEN
+      CASE SelectorD IS --case para mover automáticamente las paredes
+          WHEN "000" =>
+                FlagDerPos <= "000";
+                FlagDerLado <= '1';
+                FlagIzqPos <= "010";
+                FlagIzqLado <= '0';
+          WHEN "001" =>
+                FlagDerPos <= "000";
+                FlagDerLado <= '0';
+                FlagIzqPos <= "011";
+                FlagIzqLado <= '1';
+          WHEN "010" =>
+                FlagDerPos <= "001";
+                FlagDerLado <= '1';
+                FlagIzqPos <= "011";
+                FlagIzqLado <= '0';
+          WHEN "011" =>
+                FlagDerPos <= "001";
+                FlagDerLado <= '0';
+                FlagIzqPos <= "100";
+                FlagIzqLado <= '1';
+          WHEN "100" =>
+                FlagDerPos <= "010";
+                FlagDerLado <= '1';
+                FlagIzqPos <= "100";
+                FlagIzqLado <= '0';
+          WHEN "101" =>
+                FlagDerPos <= "010";
+                FlagDerLado <= '0';
+                FlagIzqPos <= "101";
+                FlagIzqLado <= '1';
+          WHEN "110" =>
+                FlagDerPos <= "011";
+                FlagDerLado <= '1';
+                FlagIzqPos <= "101";
+                FlagIzqLado <= '0';
+          WHEN "111" =>
+                FlagDerPos <= "011";
+                FlagDerLado <= '0';
+                FlagIzqPos <= "110";
+                FlagIzqLado <= '1';
 
 --WAIT for 3000 ms;
 
