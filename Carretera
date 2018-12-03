@@ -1,4 +1,5 @@
 --Esta propuesta de la entidad de carretera va en conjunto conel ClockDisplay de uso genérico y su case con un vector de 4 bits
+--Además, se agrega un propueta de condicionales para que la pared se devuelva
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -23,7 +24,8 @@ END COMPONENT;
 
 SIGNAL SFlagIzqPos, SFlagDerPos: std_logic_vector(2 downto 0);
 SIGNAL SFlagIzqLado, SFlagDerLado: std_logic; 
-SIGNAL SelectorD: STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL SelectorD: STD_LOGIC_VECTOR(3 DOWNTO 0); --salida del divisor del reloj para las paredes automáticas
+SIGNAL Retorno: STD_LOGIC := '0';
 BEGIN
 
 inst_clkparedes: ClockDisplay
@@ -46,62 +48,132 @@ FlagIzqLado <= '0';
 ELSIF rst/='0' THEN
       CASE SelectorD IS --case para mover automáticamente las paredes
           WHEN "0000" =>
-                FlagDerPos <= "000";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "010";
-                FlagIzqLado <= '0';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "000";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "010";
+                    FlagIzqLado <= '0';
+                ELSE
+                    FlagDerPos <= "101";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "111";
+                    FlagIzqLado <= '0';
+                END IF;
           WHEN "0001" =>
-                FlagDerPos <= "000";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "011";
-                FlagIzqLado <= '1';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "000";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "011";
+                    FlagIzqLado <= '1';
+                ELSE   
+                    FlagDerPos <= "100";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "111";
+                    FlagIzqLado <= '1'; 
+                END IF;
           WHEN "0010" =>
-                FlagDerPos <= "001";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "011";
-                FlagIzqLado <= '0';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "001";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "011";
+                    FlagIzqLado <= '0';
+                ELSE
+                    FlagDerPos <= "100";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "110";
+                    FlagIzqLado <= '0';
+                END IF;
           WHEN "0011" =>
-                FlagDerPos <= "001";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "100";
-                FlagIzqLado <= '1';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "001";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "100";
+                    FlagIzqLado <= '1';
+                ELSE
+                    FlagDerPos <= "011";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "110";
+                    FlagIzqLado <= '1';
+                 END IF;
           WHEN "0100" =>
-                FlagDerPos <= "010";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "100";
-                FlagIzqLado <= '0';
+                 IF (Retorno = '0') THEN
+                    FlagDerPos <= "010";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "100";
+                    FlagIzqLado <= '0';
+                 ELSE
+                    FlagDerPos <= "011";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "101";
+                    FlagIzqLado <= '0';
+                 END IF;
           WHEN "0101" =>
                 FlagDerPos <= "010";
                 FlagDerLado <= '0';
                 FlagIzqPos <= "101";
                 FlagIzqLado <= '1';
           WHEN "0110" =>
-                FlagDerPos <= "011";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "101";
-                FlagIzqLado <= '0';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "011";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "101";
+                    FlagIzqLado <= '0';
+                ELSE
+                    FlagDerPos <= "010";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "100";
+                    FlagIzqLado <= '0';
+                 END IF;
           WHEN "0111" =>
-                FlagDerPos <= "011";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "110";
-                FlagIzqLado <= '1';
+                IF (Retorno = '0') THEN 
+                    FlagDerPos <= "011";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "110";
+                    FlagIzqLado <= '1';
+                ELSE
+                    FlagDerPos <= "001";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "100";
+                    FlagIzqLado <= '1';
+                END IF;
           WHEN "1000" =>
-                FlagDerPos <= "100";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "110";
-                FlagIzqLado <= '0';
-          WHEN "1001" =>    
-                FlagDerPos <= "100";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "111";
-                FlagIzqLado <= '1';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "100";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "110";
+                    FlagIzqLado <= '0';
+                 ELSE
+                    FlagDerPos <= "001";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "011";
+                    FlagIzqLado <= '0';
+                 END IF;
+          WHEN "1001" => 
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "100";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "111";
+                    FlagIzqLado <= '1';
+                ELSE
+                    FlagDerPos <= "000";
+                    FlagDerLado <= '0';
+                    FlagIzqPos <= "011";
+                    FlagIzqLado <= '1';
+                END IF;
           WHEN "1010" =>
-                FlagDerPos <= "101";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "111";
-                FlagIzqLado <= '0';
+                IF (Retorno = '0') THEN
+                    FlagDerPos <= "101";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "111";
+                    FlagIzqLado <= '0';
+                ELSE
+                    FlagDerPos <= "000";
+                    FlagDerLado <= '1';
+                    FlagIzqPos <= "010";
+                    FlagIzqLado <= '0';
+                 END IF;
           WHEN others =>
-
+                     Retorno <= not(Retorno);
 END CASE;
 
 
