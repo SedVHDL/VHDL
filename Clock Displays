@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity ClockDisplay is
-generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
+generic (TIMER, WIDTH: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
 port (
     clk: in STD_LOGIC;
     Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
@@ -14,7 +14,7 @@ architecture behav of ClockDisplay is
 
     constant max_refresh_count: INTEGER := TIMER; 
     signal refresh_count: INTEGER range 0 to max_refresh_count;
-    signal refresh_state: STD_LOGIC_VECTOR(2 downto 0) := (others => '0');
+    signal refresh_state: STD_LOGIC_VECTOR(WIDTH-1 downto 0) := (others => '0');
 	
 begin
 
