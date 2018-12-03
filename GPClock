@@ -2,15 +2,15 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity ClockDisplay is
+entity GPClock is
 generic (TIMER: INTEGER:= 100000); --TIMER dice cada cuantos pulsos de reloj se producirá un cambio. ( Si "TIMER = 100.000" se producirá un cambio cada milisegundo)
 port (
     clk: in STD_LOGIC;
     Temporizador: out INTEGER RANGE 0 TO 10000000 --La señal que va a cambiar segun el reloj dividido, cada TIMER/1Mhz segundos.
 );
-end ClockDisplay;
+end GPClock;
 
-architecture behav of ClockDisplay is
+architecture behav of GPClock is
 
     constant cuenta_maxima: INTEGER := TIMER; 
     signal cuenta: INTEGER range 0 to cuenta_maxima;
