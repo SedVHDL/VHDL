@@ -1,3 +1,15 @@
+-- Este es un reloj que contará milisegundos, y nos devolverá la cantidad de milisegundo que va contando.
+-- ¿Que sentido tiene usarlo? Si lo usamos nos permitirá tener una unidad temporal pequeña que podamos manejar (1 ms).
+-- Hecho esto podremos escribir el comportamiento de la carretera de la siguiente manera:
+--
+--	 WHILE ((TempRef - Temporizador) < [Tiempo_que_queramos_que_dure_algo)) LOOP
+--		PosicionI <= ....;
+--		PosicionD <= ....;
+--	END LOOP;
+--	TempRef <= Temporizador; --Cuando termine el bucle, volvemos a igualar TemprRef a Temporizador y asi etc...
+--
+--      --Siguiente WHILE... y asi
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
