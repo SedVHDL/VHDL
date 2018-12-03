@@ -4,48 +4,89 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Carretera is
   PORT( 
         rst, clk: IN std_logic;
+        Temporizador: IN INTEGER RANGE 0 to 10000000;
         PosicionI: OUT INTEGER 5 to 15; -- Posicion del limite Izquierdo
         PosicionD: OUT INTEGER 0 to 10; -- Posicion del limite Derecho
   );
 end Carretera;
 
 architecture Behavioral of Carretera is
+SIGNAL TempRef: INTEGER RANGE 0 to 10000000:=0;
+  PROCESS (clk, rst)
+  BEGIN
 
-COMPONENT ClockDisplay is
-generic (TIMER: INTEGER); --TIMER dice cada cuantos pulsos de reloj se producirá un cambio (reloj placa 100MHz [100.000.000 pulsos por segundo])
-port (
-    clk: in STD_LOGIC;
-    Selector: out STD_LOGIC_VECTOR (3 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
-);
-END COMPONENT;
-
-
-inst_clkparedes: ClockDisplay
-                 GENERIC MAP (TIMER => 300000000) 
-                 PORT MAP( Selector => SelectorD,
-                           clk => clk); 
-PROCESS (clk, rst)
-BEGIN
-
-IF rst='0' THEN 
-  PosicionD = 0;
-  PosicionI = 5;
-ELSIF rst/='0' THEN
-      CASE SelectorD IS
-        WHEN "000" =>
-        WHEN "001" =>
-        WHEN "010" =>
-        WHEN "011" =>
-        WHEN "100" =>
-        WHEN "101" =>
-        WHEN "110" =>
-        WHEN "111"
-        
-        -- Primero hay que solucionar el reloj, necesitamos una señal de mas de 3 bits para operar con las posiciones. 
-        -- La idea es poco flexible, no permite hacer desplazamientos de distintas velocidades,
-        -- solo se limita al ritmo constante del reloj.
-        -- No se puede cambiar el componente del reloj asi como asi, porque eso tambien afectaría gravemente a la entidad Refresh.
-        
-END IF;
-END PROCESS;
+    IF rst='0' THEN 
+      PosicionD = 0;
+      PosicionI = 5;
+    ELSIF rst/='0' THEN
+    
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 2000) LOOP
+            PosicionD <= 0;
+            PosicionI <= 5;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 3000) LOOP
+            PosicionD <= 1;
+            PosicionI <= 6;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 150) LOOP
+            PosicionD <= 2;
+            PosicionI <= 7;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 500) LOOP
+            PosicionD <= 3;
+            PosicionI <= 8;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 4000) LOOP
+            PosicionD <= 4;
+            PosicionI <= 9;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 800) LOOP
+            PosicionD <= 5;
+            PosicionI <= 10;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 2000) LOOP
+            PosicionD <= 6;
+            PosicionI <= 11;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 250) LOOP
+            PosicionD <= 7;
+            PosicionI <= 12;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 150) LOOP
+            PosicionD <= 8;
+            PosicionI <= 13;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 150) LOOP
+            PosicionD <= 9;
+            PosicionI <= 14;
+          END LOOP;
+          TempRef <= Temporizador;
+          
+          WHILE ((Temporizador - TempRef) < 150) LOOP
+            PosicionD <= 10;
+            PosicionI <= 15;
+          END LOOP;
+          TempRef <= Temporizador;
+    END IF;
+  END PROCESS;
 END ARCHITECTURE;
