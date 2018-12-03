@@ -1,33 +1,45 @@
---Falta por probarlo.
+-- Este es un reloj que contará milisegundos, y nos devolverá la cantidad de milisegundo que va contando.
+-- ¿Que sentido tiene usarlo? Si lo usamos nos permitirá tener una unidad temporal pequeña que podamos manejar (1 ms).
+-- Hecho esto podremos escribir el comportamiento de la carretera de la siguiente manera:
+--
+--	 WHILE ((TempRef - Temporizador) < [Tiempo_que_queramos_que_dure_algo)) LOOP
+--		PosicionI <= ....;
+--		PosicionD <= ....;
+--	END LOOP;
+--	TempRef <= Temporizador; --Cuando termine el bucle, volvemos a igualar TemprRef a Temporizador y asi etc...
+--
+--      --Siguiente WHILE... y asi
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-ENTITY GPClock_tb IS
-END ENTITY;
+entity GPClock is
+generic (TIMER: INTEGER:= 100000); --TIMER dice cada cuantos pulsos de reloj se producirá un cambio. ( Si "TIMER = 100.000" se producirá un cambio cada milisegundo)
+port (
+    clk: in STD_LOGIC;
+    Temporizador: out INTEGER RANGE 0 TO 10000000 --La señal que va a cambiar segun el reloj dividido, cada TIMER/1Mhz segundos.
+);
+end GPClock;
 
-ARCHITECTURE Behav OF GPClock_tb IS
+architecture behav of GPClock is
 
-COMPONENT GPClock IS
-	generic (TIMER: INTEGER:= 100000);
-	port (
-    	clk: in STD_LOGIC;
-    	Temporizador: out INTEGER RANGE 0 TO 10000000 
-		);
+    constant cuenta_maxima: INTEGER := TIMER; 
+    signal cuenta: INTEGER range 0 to cuenta_maxima;
+    signal tempo: INTEGER range 0 to 10000000 := 0; -- el mismo rango que Temporizador.
 	
-END COMPONENT;
+begin
 
-SIGNAL clk_tb: STD_LOGIC:='0';
-SIGNAL Temporizador_tb: INTEGER RANGE 0 TO 10000000:=0;
-
-BEGIN
-	uut:GPClock
-    	PORT MAP(
-        		clk => clk_tb,
-                Temporizador => Temporizador_tb
-                );
-                
-    clk_tb <= not clk_tb After 5ns;
-    
-END ARCHITECTURE;
+    gen_clock: process(clk)
+    begin
+        if clk'event and clk='1' then
+	        if cuenta < cuenta_maxima then
+		        cuenta <= cuenta + 1;
+	        else
+            tempo <= tempo + 1;
+            cuenta <= 0; 
+          end if; 
+        end if; 
+        Temporizador <= tempo;
+    end process; 
+END behav;
