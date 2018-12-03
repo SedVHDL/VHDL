@@ -23,8 +23,18 @@ architecture Behavioral of TOP is
     SIGNAL syncD: std_logic;
     SIGNAL botonI: std_logic;
     SIGNAL botonD: std_logic;
+    SIGNAL Temporizador: INTEGER RANGE 0 to 10000000;
+    SIGNAL PosicionI: INTEGER RANGE 5 to 15;
+    SIGNAL PosicionD: INTEGER RANGE 0 to 10;
     
 --COMPONENTES
+    COMPONENT GPClock IS
+                generic (TIMER: INTEGER:= 100000);
+	        port (
+                        clk: in STD_LOGIC;
+                        Temporizador: out INTEGER RANGE 0 TO 10000000 
+		);
+    END COMPONENT;
     
     COMPONENT Sincronizador is
             PORT(
@@ -55,9 +65,24 @@ architecture Behavioral of TOP is
      COMPONENT Carretera is
             PORT(
                rst, clk: IN std_logic;
-               FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
-               FlagIzqLado, FlagDerLado: OUT std_logic 
+               Temporizador: INTEGER RANGE 0 to 10000000;
+               PosicionI: INTEGER RANGE 5 to 15;
+               PosicionD: INTEGER RANGE 0 to 10
                );
+    END COMPONENT;
+    
+    COMPONENT CodificadorCarretera is
+            PORT( 
+                rst, clk: IN std_logic;
+                PosicionI : IN INTEGER RANGE 5 to 15; -- Posicion del limite izquierdo a codificar
+                PosicionD: IN INTENGER RANGE 0 to 10; -- Posicion del limite derecho a codificar
+
+                --Definimos 4 salidas, dos para las dos posiciones de las paredes y otras dos para, dentro de cada posición, el ladoi izquierdo o derecho de cada pared.
+                FlagIzqPos: OUT std_logic_vector(2 downto 0); 
+                FlagDerPos: OUT std_logic_vector(2 downto 0); 
+                FlagIzqLado: OUT std_logic;
+                FlagDerLado: OUT std_logic 
+                );
     END COMPONENT;
     
     COMPONENT Refresh is
@@ -120,11 +145,20 @@ INST_FlagCoche: FlagCoche PORT MAP(
 INST_Carretera: Carretera PORT MAP(
                 clk => clk,
                 rst => rst,
-                FlagIzqPos => flagIpos,
-                FlagDerPos => flagDpos,
+                Temporizador => Temporizador,
+                PosicionI => PosicionI,
+                PosicionD => PosicionD
+                );  
+INST_CodificadorCarretera: CodificadorCarretera PORT MAP(
+                rst => rst,
+                clk => clk,
+                PosicionI => PosicionI,
+                PosicionD => PosicionD,
+                FlagIzqPos => flagIpos, 
+                FlagDerPos => flagDpos, 
                 FlagIzqLado => flagIlado,
                 FlagDerLado => flagDlado
-                );  
+                );
 INST_ClockDisplay: ClockDisplay 
                 GENERIC MAP (TIMER => 250000)
                 PORT MAP(
@@ -143,7 +177,10 @@ INST_Refresh: Refresh PORT MAP(
                SelectorOUT => Selector,
                Segmentos => Segmentos
                 );
-
+INST_GPClock: GPClock PORT MAP(
+                clk => clk,
+                Temporizador => Temporizador
+                );
 
 
 end Behavioral;
