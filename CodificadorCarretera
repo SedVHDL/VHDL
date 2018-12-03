@@ -1,1 +1,8 @@
+-- El proposito de este modulo es transformar la manera de manejar los flags de la carretera: pasar de utilizar dos señales para cada limite
+-- a utilizar una unica señal para cada lado.
 
+-- Numero máximo de posiciones:
+--  15      14      13      12      11      10      9       8       7       6       5       4       3       2       1       0     (Posicion)
+--  111 0   111 1   110 0   110 1   101 0   101 1   100 0   100 1   011 0   011 1   010 0   010 1   001 0   001 1   000 0   000 1 ([Posicion][lado])
+library IEEE;
+use std
