@@ -1,0 +1,33 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity ClockDisplay is
+generic (TIMER: INTEGER:= 100000); --TIMER dice cada cuantos pulsos de reloj se producirá un cambio. ( Si "TIMER = 100.000" se producirá un cambio cada milisegundo)
+port (
+    clk: in STD_LOGIC;
+    Temporizador: out INTEGER RANGE 0 TO 10000000 --La señal que va a cambiar segun el reloj dividido, cada TIMER/1Mhz segundos.
+);
+end ClockDisplay;
+
+architecture behav of ClockDisplay is
+
+    constant cuenta_maxima: INTEGER := TIMER; 
+    signal cuenta: INTEGER range 0 to cuenta_maxima;
+    signal tempo: INTEGER range 0 to 10000000 := 0; -- el mismo rango que Temporizador.
+	
+begin
+
+    gen_clock: process(clk)
+    begin
+        if clk'event and clk='1' then
+	        if cuenta < cuenta_maxima then
+		        cuenta <= cuenta + 1;
+	        else
+            tempo <= tempo + 1;
+            cuenta <= 0; 
+          end if; 
+        end if; 
+        Temporizador <= tempo;
+    end process; 
+END behav;
