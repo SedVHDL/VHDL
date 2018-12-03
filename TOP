@@ -1,4 +1,4 @@
-
+--En esta propuest la única variación es en la llamada y la instanciación del component de ClockDisplay con respecto a su forma genérica
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -76,10 +76,10 @@ architecture Behavioral of TOP is
     END COMPONENT;
     
     COMPONENT ClockDisplay is
-            GENERIC(TIMER: integer);
+            GENERIC(TIMER, WIDTH: integer);
             PORT(
                 clk: in STD_LOGIC;
-                Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+                Selector: out STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
             );
     END COMPONENT;
                  
@@ -126,7 +126,7 @@ INST_Carretera: Carretera PORT MAP(
                 FlagDerLado => flagDlado
                 );  
 INST_ClockDisplay: ClockDisplay 
-                GENERIC MAP (TIMER => 250000)
+                GENERIC MAP (TIMER => 250000, WIDTH => 3)
                 PORT MAP(
                 clk => clk,
                 Selector => selector_aux
