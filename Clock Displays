@@ -6,7 +6,7 @@ entity ClockDisplay is
 generic (TIMER, WIDTH: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
 port (
     clk: in STD_LOGIC;
-    Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+    Selector: out STD_LOGIC_VECTOR (WIDHT-1 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
 );
 end ClockDisplay;
 
