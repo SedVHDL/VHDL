@@ -5,20 +5,25 @@ entity Carretera is
   PORT( 
         rst, clk: IN std_logic;
         Temporizador: IN INTEGER RANGE 0 to 10000000;
-        PosicionI: OUT INTEGER 5 to 15; -- Posicion del limite Izquierdo
-        PosicionD: OUT INTEGER 0 to 10; -- Posicion del limite Derecho
+        PosicionI: OUT INTEGER RANGE 5 to 15; -- Posicion del limite Izquierdo
+        PosicionD: OUT INTEGER RANGE 0 to 10 -- Posicion del limite Derecho
   );
 end Carretera;
 
 architecture Behavioral of Carretera is
-SIGNAL TempRef: INTEGER RANGE 0 to 10000000:=0;
+
+SIGNAL TempRef: INTEGER RANGE 0 to 10000000 := 0;
+
+BEGIN
+
+
   PROCESS (clk, rst)
   BEGIN
-
-    IF rst='0' THEN 
-      PosicionD = 0;
-      PosicionI = 5;
-    ELSIF rst/='0' THEN
+  IF (clk'event and clk = '1') THEN
+    IF (rst = '0') THEN 
+      PosicionD <= 0;
+      PosicionI <= 5;
+    ELSIF (rst /= '0') THEN
     
           TempRef <= Temporizador;
           
@@ -87,6 +92,7 @@ SIGNAL TempRef: INTEGER RANGE 0 to 10000000:=0;
             PosicionI <= 15;
           END LOOP;
           TempRef <= Temporizador;
+    END IF;
     END IF;
   END PROCESS;
 END ARCHITECTURE;
