@@ -13,7 +13,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity Carretera is
+entity CodificadorCarretera is
   PORT( 
         rst, clk: IN std_logic;
         PosicionI : IN INTEGER RANGE 5 to 15; -- Posicion del limite izquierdo a codificar
@@ -25,9 +25,9 @@ entity Carretera is
         FlagIzqLado: OUT std_logic;
         FlagDerLado: OUT std_logic 
   );
-end Carretera;
+end CodificadorCarretera;
 
-architecture Behavioral of Carretera is
+architecture Behavioral of CodificadorCarretera is
 
 COMPONENT ClockDisplay is
 generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES;
