@@ -1,0 +1,30 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+--Este código generará un bit pseudo-aleatorio el cual dirá si las paredes se mueven a la derecha o izquierda, en la entidad Carretera
+ENTITY SelectorAleatorio is
+    GENERIC (WIDTH: INTEGER := 16);
+    PORT (
+        clk     : IN STD_LOGIC;
+        SAOut   : OUT STD_LOGIC
+        );
+END SelectorAleatorio;
+
+ARCHITECTURE behav OF SelectorAleatorio is
+
+SIGNAL VectorAux: STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) := "0011010110011010";
+SIGNAL Bit_Aux: STD_LOGIC;
+
+BEGIN 
+
+Bit_Aux <= NOT(VectorAux(WIDTH-1) XOR VectorAux(WIDTH-2)); --Cambiará el Bit_Aux según la función xor para darle algo de aleatoreidad
+
+PROCESS (clk)
+BEGIN
+    IF (clk'event AND clk = '1') THEN
+        VectorAux <= VectorAux(WIDTH-2 DOWNTO 0) & Bit_Aux; --Mueve un bit a la izquierda el vector y agrega el Bit_Aux al final, así este cambiará de manera pseudo aleatoria, siempre depende del tamaño del vector
+     END IF;    
+END PROCESS;
+
+SAOut <= VectorAux(WIDTH-1); --Sacamos el primer bit del vector, el cual determinará hacia donde queremos moverla
+
+END behav;
