@@ -10,7 +10,7 @@ entity debouncer is
 end debouncer;
 
 architecture Behavioral of debouncer is
-    signal Q1, Q2, Q3 : std_logic;
+    signal Q1, Q2, Q3, Q4 : std_logic;
 BEGIN
     process(clk)
     begin
@@ -19,15 +19,17 @@ BEGIN
             Q1 <= '0';
             Q2 <= '0';
             Q3 <= '0';
+            Q4 <= '0';
         else
             Q1 <= btn_in;
             Q2 <= Q1;
             Q3 <= Q2;
+            Q4 <= Q3;
         end if;
     end if;
  end process;
  
- btn_out <= Q1 and Q2 and (not Q3);
+ btn_out <= Q1 and Q2 and Q3 and (not Q4);
    
 
 end Behavioral;
