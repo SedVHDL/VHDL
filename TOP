@@ -5,7 +5,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity TOP is --En esta entidad pondremos todos los componentes y sus respectivas instanciaciones.
         PORT(
             clk, rst: IN std_logic;
-            botonIraw, botonDraw: IN std_logic;
+            botonIraw, botonDraw, botonCraw: IN std_logic;
             Segmentos, Selector: OUT std_logic_vector (7 downto 0));
 end TOP;
 
@@ -23,6 +23,15 @@ architecture Behavioral of TOP is
     SIGNAL syncD: std_logic;
     SIGNAL botonI: std_logic;
     SIGNAL botonD: std_logic;
+    SIGNAL Temporizador: STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL PosicionI: INTEGER RANGE 5 TO 15;
+    SIGNAL PosicionD: INTEGER RANGE 0 TO 10;
+    TYPE tipo_estado IS (S0,S1,S2,S3,S4); --  S3 -> VICTORIA, S4 -> GAME OVER (Niveles en orden S1 -> 1 y S2 -> 2
+    SIGNAL e_actual, e_siguiente: tipo_estado;
+    SIGNAL botonC: STD_LOGIC; --El botón central, para seleccionar en el menú principal
+    SIGNAL selector_nivel: STD_LOGIC; --Viene de la entidad de Menú
+    SIGNAL fin_carretera: STD_LOGIC; --Viene de la entidad de Carretera
+    SIGNAL game_over: STD_LOGIC; --Viene de la entidad de Carretera
     
 --COMPONENTES
     
@@ -55,9 +64,23 @@ architecture Behavioral of TOP is
      COMPONENT Carretera is
             PORT(
                rst, clk: IN std_logic;
-               FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
-               FlagIzqLado, FlagDerLado: OUT std_logic 
+               PosicionI: OUT INTEGER RANGE 5 TO 15;
+               PosicionD: OUT INTEGER RANGE 0 TO 10
                );
+    END COMPONENT;
+    
+    COMPONENT CodificadorCarretera is
+            PORT(
+                rst, clk: IN std_logic;
+                PosicionI : IN INTEGER RANGE 5 to 15; -- Posicion del limite izquierdo a codificar
+                PosicionD: IN INTEGER RANGE 0 to 10; -- Posicion del limite derecho a codificar
+                
+                --Definimos 4 salidas, dos para las dos posiciones de las paredes y otras dos para, dentro de cada posición, el ladoi izquierdo o derecho de cada pared.
+                FlagIzqPos: OUT std_logic_vector(2 downto 0); 
+                FlagDerPos: OUT std_logic_vector(2 downto 0); 
+                FlagIzqLado: OUT std_logic;
+                FlagDerLado: OUT std_logic 
+                );
     END COMPONENT;
     
     COMPONENT Refresh is
@@ -75,8 +98,8 @@ architecture Behavioral of TOP is
                );
     END COMPONENT;
     
-    COMPONENT ClockDisplay is
-            GENERIC(TIMER: integer);
+    COMPONENT GPClock is
+            GENERIC(TIMER, WIDTH: integer);
             PORT(
                 clk: in STD_LOGIC;
                 Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
@@ -93,23 +116,27 @@ INST_SincronizadorI: Sincronizador PORT MAP(
                 clk => clk,
                 sync_out => syncI
                 );
+                
 INST_SincronizadorD: Sincronizador PORT MAP(
                 sync_in => botonDraw,
                 clk => clk,
                 sync_out => syncD
                 );
+                
 INST_DebouncerI: Debouncer PORT MAP(
                 clk => clk,
                 rst => rst,
                 btn_in => syncI,
                 btn_out => botonI
                 );
+                
 INST_DebouncerD: Debouncer PORT MAP(
                 clk => clk,
                 rst => rst,
                 btn_in => syncD,
                 btn_out => botonD
                 );
+                
 INST_FlagCoche: FlagCoche PORT MAP(
                 clk => clk,
                 rst => rst,
@@ -117,33 +144,107 @@ INST_FlagCoche: FlagCoche PORT MAP(
                 BotonDer => botonD,
                 FlagC => flagC
                 );
+                
 INST_Carretera: Carretera PORT MAP(
                 clk => clk,
                 rst => rst,
+                PosicionI => PosicionI,
+                PosicionD => PosicionD
+                );
+
+INST_CodificadorCarretera: CodificadorCarretera PORT MAP(
+                clk => clk,
+                rst => rst,
+                PosicionI => PosicionI,
+                PosicionD => PosicionD,
                 FlagIzqPos => flagIpos,
                 FlagDerPos => flagDpos,
                 FlagIzqLado => flagIlado,
-                FlagDerLado => flagDlado
-                );  
-INST_ClockDisplay: ClockDisplay 
-                GENERIC MAP (TIMER => 250000)
+                FlagDerLado => FlagDlado
+                );
+                  
+INST_GPClock: GPClock 
+                GENERIC MAP (TIMER => 250000, WIDTH => 3)
                 PORT MAP(
                 clk => clk,
                 Selector => selector_aux
                 );
-INST_Refresh: Refresh PORT MAP(
-               clk => clk,
-               rst => rst,
-               flagC => flagC,
-               flagIpos =>  flagIpos,
-               flagDpos => flagDpos,
-               flagIlado => flagIlado,
-               flagDlado => flagDlado,
-               SelectorIN => selector_aux,
-               SelectorOUT => Selector,
-               Segmentos => Segmentos
+                
+INST_Refresh: Refresh
+                PORT MAP(
+                clk => clk,
+                rst => rst,
+                flagC => flagC,
+                flagIpos =>  flagIpos,
+                flagDpos => flagDpos,
+                flagIlado => flagIlado,
+                flagDlado => flagDlado,
+                SelectorIN => selector_aux,
+                SelectorOUT => Selector,
+                Segmentos => Segmentos
                 );
+                
+SINCRONIZACION_DE_ESTADOS: PROCESS(clk)
+BEGIN
+    IF rising_edge(clk) THEN
+        IF (rst = '1') THEN
+            e_actual <= S0;
+        ELSE
+            e_actual <= e_siguiente;
+        END IF;
+    END IF;
+END PROCESS;
 
+--DECODIFICADOR_SALIDA: PROCESS (e_actual)
+--BEGIN
+--    CASE (e_actual) is
+--        WHEN S0 => 
+--            IF(selector_nivel = '0') THEN
+--                selector_aux < "011" -- O SelectorIN ?
+--            END IF;
+--            IF(selector_nivel = '1') THEN
+--                selector_aux < "010" -- O SelectorIN ?
+--            END IF;
+--        WHEN OTHERS => 
+--END CASE;
+--END PROCESS;
 
-
+DECODIFICADOR_ESTADO_SIGUIENTE: PROCESS(e_actual, botonC, selector_nivel, fin_carretera, game_over)
+BEGIN
+    e_siguiente<=S0; --Revisar esto
+    CASE(e_actual) IS
+        WHEN S0=>
+            IF(selector_nivel = '0' AND botonC = '1') THEN --Desde el menú principal, si se selecciona por encima el nivel y se pulsa el botón central, se pasa a uno de los niveles.
+                e_siguiente <= S1;
+            IF(selector_nivel = '1' AND botonC = '1') THEN
+                e_siguiente <= S2;
+            END IF;
+            END IF;
+        WHEN S1=>
+            IF(fin_carretera = '1') THEN --Estando en uno de los niveles, se comprueba si se ha superado el nivel (paso a S3) o se ha perdido la partida (paso a S4)
+                e_siguiente <= S3;
+            IF(game_over = '1') THEN
+                e_siguiente <= S4;
+            END IF;
+            END IF;
+        WHEN S2=>
+            IF(fin_carretera = '1') THEN
+                e_siguiente <= S3;
+            IF(game_over = '1') THEN
+                e_siguiente <= S4;
+            END IF;
+            END IF;
+        WHEN S3=> --Tanto el mensaje de victoria como de derrota se "quita" volviendo a pulsar el botón central, regresando al menú principal.
+            IF(botonC = '1') THEN
+                e_siguiente <= S0;
+            END IF;
+        WHEN S4=>
+            IF(botonC = '1') THEN
+                e_siguiente <= S0;
+            END IF;
+    END CASE;
+END PROCESS;
+        
+                
 end Behavioral;
+
