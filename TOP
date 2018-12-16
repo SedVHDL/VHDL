@@ -1,4 +1,5 @@
 
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -195,19 +196,19 @@ BEGIN
     END IF;
 END PROCESS;
 
---DECODIFICADOR_SALIDA: PROCESS (e_actual)
---BEGIN
---    CASE (e_actual) is
---        WHEN S0 => 
---            IF(selector_nivel = '0') THEN
---                selector_aux < "011" -- O SelectorIN ?
---            END IF;
---            IF(selector_nivel = '1') THEN
---                selector_aux < "010" -- O SelectorIN ?
---            END IF;
---        WHEN OTHERS => 
---END CASE;
---END PROCESS;
+DECODIFICADOR_SALIDA: PROCESS (e_actual)
+BEGIN
+    CASE (e_actual) is
+        WHEN S0 => 
+            IF(selector_nivel = '0') THEN
+                selector_aux <= "011"; -- O SelectorIN ?
+            END IF;
+            IF(selector_nivel = '1') THEN
+                selector_aux <= "010"; -- O SelectorIN ?
+            END IF;
+        WHEN OTHERS => 
+END CASE;
+END PROCESS;
 
 DECODIFICADOR_ESTADO_SIGUIENTE: PROCESS(e_actual, botonC, selector_nivel, fin_carretera, game_over)
 BEGIN
