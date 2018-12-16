@@ -185,6 +185,8 @@ INST_Refresh: Refresh
                 Segmentos => Segmentos
                 );
                 
+--MÁQUINA DE ESTADOS
+                
 SINCRONIZACION_DE_ESTADOS: PROCESS(clk)
 BEGIN
     IF rising_edge(clk) THEN
