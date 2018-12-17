@@ -6,14 +6,17 @@ entity refresh is
     Port (
         clk: IN STD_LOGIC;
         rst: IN STD_LOGIC;
+        EstadoIN: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- el estado que le envia MENU.
+        lvlsel: IN STD_LOGIC; -- El nivel que se vaya a seleccionar, el 1 o el 2. Es la señal de la que van a depender los dos segmentos pequeños a los lados de 1 o de 2.
         flagC: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de posicion del coche.
         flagIpos: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite izquierdo).
         flagDpos: IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Flag indicador de display (Limite derecho).
         flagIlado: IN STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado izquierdo).
         flagDlado: IN STD_LOGIC; -- Flag infdicador de lado dentro de un display (Para el lado derecho).
-        SelectorIN: IN STD_LOGIC_VECTOR(2 DOWNTO 0);  -- El selector que entra al controlador en formato de 3 bits.
-        SelectorOUT: OUT STD_LOGIC_VECTOR(7 DOWNTO 0); --Señal de selector para Constraits.
-        Segmentos: OUT STD_LOGIC_VECTOR(7 DOWNTO 0) --Señal de segmentos para Constraits.
+        SelectorIN: IN STD_LOGIC_VECTOR(2 DOWNTO 0);  -- El selector que entra al controlador en formato de 3 bits, es el puntero refresh con el que refresh va pasando por cada display.
+        SelectorOUT: OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- Señal de selector para Constraits.
+        Segmentos: OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- Señal de segmentos para Constraits.
+        fracaso: OUT STD_LOGIC -- Va a enviar a menu si has perdido ya o no.
          );
 end refresh;
 
@@ -23,37 +26,93 @@ BEGIN
 
 PROCESS(clk)
 BEGIN
-
  IF (clk'event AND clk = '1') THEN
-    IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
-        IF(flagIlado = '0') THEN
-            Segmentos <= "11111000";  -- ":-"
+ 
+     CASE EstadoIN IS
+        WHEN "000" => --Estado de MENU (Escribe en los displays la seleccion de niveles)
+            IF (SelectorIN = "111" OR SelectorIN = "101") THEN
+                Segmentos <= "11110001"; -- "L"
+            ELSIF (SelectorIN = "110") THEN
+                Segmentos <= "11000001"; -- "U"
+            ELSIF (SelectorIN = "011") THEN
+                IF(lvlsel = '0') THEN
+                    Segmentos <= "11001011"; -- ".1"
+                ELSE
+                    Segmentos <= "11001111"; -- " 1"
+                END IF;
+            ELSIF (SelectorIN = "010") THEN
+                IF (lvlsel = '0') THEN
+                    Segmentos <= "11111011"; --". "
+                ELSE
+                    Segmentos <= "11101111"; --" ."
+                END IF;
+            ELSIF (SelectorIN = "001") THEN
+                    Segmentos <= "10010010"; --"2"
+            ELSIF (SelectorIN = "000") THEN
+                    Segmentos <= "11111011"; --". "
+            ELSE
+                    Segmentos <= "11111111"; -- "  "
+            END IF;
+            
+        WHEN "011" => --Estado de GAMEOVER (Escribe en los displays la palabra de gameover)
+            IF (SelectorIN = "101") THEN
+                Segmentos <= "10111000"; -- "F"
+            ELSIF (SelectorIN = "100") THEN
+                Segmentos <= "10001000"; -- "A"
+            ELSIF (SelectorIN = "011") THEN
+                Segmentos <= "11001111"; -- "I"
+            ELSIF (SelectorIN = "010") THEN
+                Segmentos <= "11110001"; -- "L"
+            ELSE
+                Segmentos <= "11111111"; -- "  "
+            END IF;
+        WHEN "100" => --Estado de VICTORIA (Escribe en los displays la palabra de victoria)
+            IF (SelectorIN = "101") THEN
+                Segmentos <= "10100001"; -- "G"
+            ELSIF (SelectorIN = "100") THEN
+                Segmentos <= "10000001"; -- "O"
+            ELSIF (SelectorIN = "011") THEN
+                Segmentos <= "10000001"; -- "O"
+            ELSIF (SelectorIN = "010") THEN
+                Segmentos <= "11000010"; -- "d"
+            ELSE
+                Segmentos <= "11111111"; -- "  "
+            END IF;
+        WHEN OTHERS => --Estados de LVL1 y LVL2 (Escribe en los displays El coche con la carretera)
+     
+        IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
+            IF(flagIlado = '0') THEN
+                Segmentos <= "11111000";  -- ":-"
+            ELSE
+                Segmentos <= "11111111"; --GAMEOVER
+                fracaso <= '1'; --GAMEOVER
+            END IF;
+        ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
+            IF(flagIlado = '0') THEN
+                Segmentos <= "11001110"; -- "-:"
+            ELSE
+                Segmentos <= "11111111"; --GAMEOVER
+                fracaso <= '1'; --GAMEOVER
+            END IF;
+        ELSIF (SelectorIN = flagIpos AND SelectorIN /= flagC ) THEN
+            IF (flagIlado = '1') THEN
+                Segmentos <= "11111100";
+            ELSE
+                Segmentos <= "11100111";
+            END IF;
+        ELSIF (SelectorIN = flagDpos AND SelectorIN /= flagC ) THEN
+                    IF (flagDlado = '1') THEN
+                        Segmentos <= "11111001";
+                    ELSE
+                        Segmentos <= "11001111";
+                    END IF;
+        ELSIF (SelectorIN = flagC) THEN
+            Segmentos <= "11111110";
         ELSE
-            Segmentos <= "11111111"; --GAMEOVER
+            Segmentos <= "11111111";
         END IF;
-    ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
-        IF(flagIlado = '0') THEN
-            Segmentos <= "11001110"; -- "-:"
-        ELSE
-            Segmentos <= "11111111"; --GAMEOVER
-        END IF;
-    ELSIF (SelectorIN = flagIpos AND SelectorIN /= flagC ) THEN
-        IF (flagIlado = '1') THEN
-            Segmentos <= "11001111"; -- ":" derecho
-        ELSE
-            Segmentos <= "11111001"; -- ":" izquierdo
-        END IF;
-    ELSIF (SelectorIN = flagDpos AND SelectorIN /= flagC ) THEN
-        IF (flagDlado = '1') THEN
-            Segmentos <= "11001111"; -- ":" derecho
-        ELSE
-            Segmentos <= "11111001"; -- ":" izquierdo
-        END IF;                   
-    ELSIF (SelectorIN = flagC) THEN
-        Segmentos <= "11111110"; -- " - " coche
-    ELSE
-        Segmentos <= "11111111";
-    END IF;
+        
+     END CASE;
  END IF;    
 END PROCESS;
 
