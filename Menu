@@ -34,44 +34,48 @@ END PROCESS;
 
 DECODIFICADOR_SALIDA: PROCESS (e_actual)
 BEGIN
-    CASE (e_actual) is
-        WHEN "000" => Estado_out <= e_actual;
-        WHEN "001" => Estado_out <= e_actual;
-        WHEN "010" => Estado_out <= e_actual;
-        WHEN "011" => Estado_out <= e_actual;
-        WHEN "100" => Estado_out <= e_actual;
+    CASE e_actual is
+        WHEN "000" =>
+                Estado_out <= "000";
+        WHEN "001" =>
+                Estado_out <= "001";
+        WHEN "010" =>
+                Estado_out <= "010";
+        WHEN "011" =>
+                Estado_out <= "011";
+        WHEN "100" =>
+                Estado_out <= "100";
         WHEN OTHERS => 
 END CASE;
 END PROCESS;
 
 DECODIFICADOR_ESTADO_SIGUIENTE: PROCESS(e_actual, BotonC, selector_nivel, Fin_carretera, Fracaso)
 BEGIN
-    e_siguiente <= "000"; --Revisar esto
     CASE e_actual IS
         WHEN "000"=>
             IF(selector_nivel = '0' AND BotonC = '1') THEN --Desde el menú principal, si se selecciona por encima el nivel y se pulsa el botón central, se pasa a uno de los niveles.
-                e_siguiente <= "001";
+                e_siguiente <= "001"; --Vas al LVL1
             
             ELSIF(selector_nivel = '1' AND BotonC = '1') THEN
-                e_siguiente <= "010";
+                e_siguiente <= "010"; --Vas al LVL2
                 ELSE
-                    e_siguiente <= "000";
+                    e_siguiente <= "000"; --Sigues elegiendo
             END IF;
         WHEN "001"=>
             IF(fin_carretera = '1' AND fracaso = '0') THEN --Estando en uno de los niveles, se comprueba si se ha superado el nivel (paso a S3) o se ha perdido la partida (paso a S4)
-                e_siguiente <= "011";
+                e_siguiente <= "100"; --Has ganado
             ELSIF(Fracaso = '1') THEN
-                e_siguiente <= "100";
+                e_siguiente <= "011"; --HAs perido
                 ELSE
-                    e_siguiente <= "001";
+                    e_siguiente <= "001"; --Sigues conduciendo
             END IF;
         WHEN "010"=>
             IF(fin_carretera = '1' AND fracaso = '0') THEN
-                e_siguiente <= "011";
+                e_siguiente <= "100"; -- Has ganado 
             ELSIF(Fracaso = '1') THEN
-                e_siguiente <= "100";
+                e_siguiente <= "011"; -- Has perdido Tony
                 ELSE
-                    e_siguiente <= "010";
+                    e_siguiente <= "010"; -- Sigues conduciendo
             END IF;
         WHEN "011"=> --Tanto el mensaje de victoria como de derrota se "quita" volviendo a pulsar el botón central, regresando al menú principal.
             IF(BotonC = '1') THEN
