@@ -1,0 +1,105 @@
+
+        library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY Menu IS 
+        PORT(
+        clk, rst: IN STD_LOGIC;
+        BotonI, BotonD, BotonC: IN STD_LOGIC;
+        Fin_carretera: IN STD_LOGIC;
+        Fracaso: IN STD_LOGIC;
+        Estado_out: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+        Lvl_sel: OUT STD_LOGIC
+        );
+END ENTITY;
+
+ARCHITECTURE behav of Menu is
+
+SIGNAL e_actual, e_siguiente: STD_LOGIC_VECTOR(2 DOWNTO 0);
+SIGNAL selector_nivel: STD_LOGIC; --Viene de la entidad de Menú
+
+
+BEGIN
+
+SINCRONIZACION_DE_ESTADOS: PROCESS(clk)
+BEGIN
+    IF rising_edge(clk) THEN
+        IF (rst = '0') THEN
+            e_actual <= "000";
+        ELSE
+            e_actual <= e_siguiente;
+        END IF;
+    END IF;
+END PROCESS;
+
+DECODIFICADOR_SALIDA: PROCESS (e_actual)
+BEGIN
+    CASE (e_actual) is
+        WHEN "000" => Estado_out <= e_actual;
+        WHEN "001" => Estado_out <= e_actual;
+        WHEN "010" => Estado_out <= e_actual;
+        WHEN "011" => Estado_out <= e_actual;
+        WHEN "100" => Estado_out <= e_actual;
+        WHEN OTHERS => 
+END CASE;
+END PROCESS;
+
+DECODIFICADOR_ESTADO_SIGUIENTE: PROCESS(e_actual, BotonC, selector_nivel, Fin_carretera, Fracaso)
+BEGIN
+    e_siguiente <= "000"; --Revisar esto
+    CASE e_actual IS
+        WHEN "000"=>
+            IF(selector_nivel = '0' AND BotonC = '1') THEN --Desde el menú principal, si se selecciona por encima el nivel y se pulsa el botón central, se pasa a uno de los niveles.
+                e_siguiente <= "001";
+            
+            ELSIF(selector_nivel = '1' AND BotonC = '1') THEN
+                e_siguiente <= "010";
+                ELSE
+                    e_siguiente <= "000";
+            END IF;
+        WHEN "001"=>
+            IF(fin_carretera = '1' AND fracaso = '0') THEN --Estando en uno de los niveles, se comprueba si se ha superado el nivel (paso a S3) o se ha perdido la partida (paso a S4)
+                e_siguiente <= "011";
+            ELSIF(Fracaso = '1') THEN
+                e_siguiente <= "100";
+                ELSE
+                    e_siguiente <= "001";
+            END IF;
+        WHEN "010"=>
+            IF(fin_carretera = '1' AND fracaso = '0') THEN
+                e_siguiente <= "011";
+            ELSIF(Fracaso = '1') THEN
+                e_siguiente <= "100";
+                ELSE
+                    e_siguiente <= "010";
+            END IF;
+        WHEN "011"=> --Tanto el mensaje de victoria como de derrota se "quita" volviendo a pulsar el botón central, regresando al menú principal.
+            IF(BotonC = '1') THEN
+                e_siguiente <= "000";
+            ELSE
+                e_siguiente <= "011";
+            END IF;
+        WHEN "100"=>
+            IF(BotonC = '1') THEN
+                e_siguiente <= "000";
+            ELSE
+                e_siguiente <= "100";
+            END IF;
+        WHEN OTHERS =>
+    END CASE;
+END PROCESS;
+
+Seleccion_Nivel: PROCESS(BotonI, BotonD, e_actual)
+BEGIN
+    IF (e_actual = "000") THEN
+        IF (BotonD = '1' AND BotonI = '0') THEN
+            selector_nivel <= '1';
+        ELSIF (BotonD = '0' AND BotonI = '1') THEN
+            selector_nivel <= '0';
+        ELSE
+            selector_nivel <= selector_nivel;
+        END IF;
+    END IF;
+    lvl_sel <= selector_nivel;
+END PROCESS;
+END ARCHITECTURE;
