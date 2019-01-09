@@ -1,0 +1,75 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+--Este código generará un bit pseudo-aleatorio el cual dirá si las paredes se mueven a la derecha o izquierda, en la entidad Carretera
+ENTITY SelectorAleatorio is
+    GENERIC (WIDTH: INTEGER := 16);
+    PORT (
+        clk     : IN STD_LOGIC;
+        rst: IN STD_LOGIC;
+        PosicionD_Out: OUT INTEGER RANGE 0 to 10;
+        PosicionI_Out: OUT INTEGER RANGE 5 to 15  
+        );
+END SelectorAleatorio;
+
+ARCHITECTURE behav OF SelectorAleatorio is
+
+COMPONENT GPClock1Bit is --Divisor de frencuencia de 1 bit
+generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
+port (
+    clk: in STD_LOGIC;
+    rst: IN STD_LOGIC;
+    Clk1Bit: out STD_LOGIC --La señal que va a cambiar segun el reloj dividido.
+);
+end COMPONENT;
+
+
+SIGNAL VectorAux: STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) := "0011010110011010";
+SIGNAL Bit_Aux: STD_LOGIC;
+SIGNAL Clk2seg: STD_LOGIC;
+SIGNAL quieto: STD_LOGIC := '1'; --variable que cambiará cada ciclo para que entre sólo una vez en la condición de la carretera
+SIGNAL PosicionD_Aux: INTEGER RANGE 0 TO 10 := 0;
+SIGNAL PosicionI_Aux: INTEGER RANGE 5 TO 15 := 5;
+
+BEGIN 
+
+
+inst_GPClock1Bit: GPClock1Bit
+     GENERIC MAP (TIMER => 400000000)
+     PORT MAP(Clk1Bit => Clk2seg, clk => clk, rst => rst);
+
+Bit_Aux <= NOT(VectorAux(WIDTH-1) XOR VectorAux(WIDTH-2)); --Cambiará el Bit_Aux según la función xor para darle algo de aleatoreidad
+
+PROCESS (Clk2seg) --Process para generar el bit aleatorio de moverse a la izquiera o a la derecha
+BEGIN
+    IF(clk2seg'event and clk2seg = '1') THEN
+        VectorAux <= VectorAux(WIDTH-2 DOWNTO 0) & Bit_Aux; --Mueve un bit a la izquierda el vector y agrega el Bit_Aux al final, así este cambiará de manera pseudo aleatoria, siempre depende del tamaño del vector   
+        quieto <= not(quieto); 
+    END IF;
+
+END PROCESS;
+
+PROCESS (quieto, rst)
+BEGIN
+    IF (rst = '0') THEN
+        PosicionD_aux <= 0;
+        PosicionI_aux <= 5;
+    ELSE
+        IF (quieto = '1') THEN --Sólo entrará en los ciclos positivos de "quieto"
+            IF ( VectorAux (WIDTH - 1) = '1') THEN --Se mueve a la izquierda
+                PosicionD_aux <= PosicionD_aux + 1;
+                PosicionI_aux <= PosicionI_aux + 1;  
+              
+            ELSE --Se mueve a la derecha
+                PosicionD_aux <= PosicionD_aux - 1;
+                PosicionI_aux <= PosicionI_aux - 1;
+
+            END IF;
+       END IF;
+    END IF;
+END PROCESS;
+
+PosicionD_Out <= PosicionD_aux;
+PosicionI_Out <= PosicionI_aux;   
+
+
+END behav;
