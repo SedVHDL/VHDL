@@ -4,116 +4,154 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Carretera is
   PORT( 
         rst, clk: IN std_logic;
-        FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0); --Definimos 4 salidas, dos para las dos posiciones de las paredes y otras dos para, dentro de cada posición, el ladoi izquierdo o derecho de cada pared.
-        FlagIzqLado, FlagDerLado: OUT std_logic 
+        Estado: IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+        PosicionI: OUT INTEGER RANGE 5 to 15; -- Posicion del limite Izquierdo
+        PosicionD: OUT INTEGER RANGE 0 to 10; -- Posicion del limite Derecho
+        finCarrera: OUT STD_LOGIC
   );
 end Carretera;
 
 architecture Behavioral of Carretera is
 
-COMPONENT ClockDisplay is
-generic (TIMER: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES;
+COMPONENT GPClock is --Componente para el juego de carretera LVL 1
+generic (TIMER, WIDTH: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
 port (
     clk: in STD_LOGIC;
-    Selector: out STD_LOGIC_VECTOR (2 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+    rst: IN STD_LOGIC;
+    Selector: out STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
 );
+end COMPONENT;
+
+COMPONENT SelectorAleatorio is -- Generador de las posiciones aleatorias
+    GENERIC (WIDTH: INTEGER := 16);
+    PORT (
+        clk     : IN STD_LOGIC;
+        rst : IN STD_LOGIC;
+        PosicionD_Out: OUT INTEGER RANGE 0 to 10;
+        PosicionI_Out: OUT INTEGER RANGE 5 to 15  
+        );
 END COMPONENT;
 
-SIGNAL SFlagIzqPos, SFlagDerPos: std_logic_vector(2 downto 0);
-SIGNAL SFlagIzqLado, SFlagDerLado: std_logic; 
-SIGNAL SelectorD: STD_LOGIC_VECTOR(2 DOWNTO 0);
+SIGNAL Temporizador: STD_LOGIC_VECTOR (9 DOWNTO 0);
+SIGNAL PosicionD_Aux: INTEGER RANGE 0 TO 10 := 0;
+SIGNAL PosicionI_Aux: INTEGER RANGE 5 TO 15 := 5;
+
+
 BEGIN
 
-inst_clkparedes: ClockDisplay
-                 GENERIC MAP (TIMER => 300000000)
-                 PORT MAP( Selector => SelectorD,
-                           clk => clk); 
-PROCESS (clk, rst)
-BEGIN
 
-IF rst='0' THEN --Con el reset regresamos el reset a la primera posición definida
---Primera iteración
+inst_GPClock_Carretera1: GPClock -- Divisor de frecuencia para el LVL 1
+     GENERIC MAP (TIMER => 50000000, WIDTH => 10)
+     PORT MAP(Selector => Temporizador, clk => clk, rst => rst);
 
-FlagDerPos <= "000";
-FlagDerLado <= '1';
-FlagIzqPos <= "010";
-FlagIzqLado <= '0';
+inst_SelectorAleatorio: SelectorAleatorio
+    PORT MAP(
+             clk => clk,
+             rst => rst,
+             PosicionD_Out => PosicionD_Aux,
+             PosicionI_Out => PosicionI_Aux
+             );
 
---WAIT for 3000 ms;
+  PROCESS (clk, rst)
 
-ELSIF rst/='0' THEN
-      CASE SelectorD IS --case para mover automáticamente las paredes
-          WHEN "000" =>
-                FlagDerPos <= "000";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "010";
-                FlagIzqLado <= '0';
-          WHEN "001" =>
-                FlagDerPos <= "000";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "011";
-                FlagIzqLado <= '1';
-          WHEN "010" =>
-                FlagDerPos <= "001";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "011";
-                FlagIzqLado <= '0';
-          WHEN "011" =>
-                FlagDerPos <= "001";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "100";
-                FlagIzqLado <= '1';
-          WHEN "100" =>
-                FlagDerPos <= "010";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "100";
-                FlagIzqLado <= '0';
-          WHEN "101" =>
-                FlagDerPos <= "010";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "101";
-                FlagIzqLado <= '1';
-          WHEN "110" =>
-                FlagDerPos <= "011";
-                FlagDerLado <= '1';
-                FlagIzqPos <= "101";
-                FlagIzqLado <= '0';
-          WHEN "111" =>
-                FlagDerPos <= "011";
-                FlagDerLado <= '0';
-                FlagIzqPos <= "110";
-                FlagIzqLado <= '1';
-          WHEN others =>
-END CASE;
---WAIT for 3000 ms;
+  BEGIN
+  
+    IF (rst = '0') THEN 
+        PosicionD <= 0;
+        PosicionI <= 5;
+        finCarrera <= '0';
+    ELSIF (clk'event and clk = '1') THEN
+      
+        CASE Estado IS
+            WHEN "001" => -- LVL 1, carretera preprogramada de Alex
+              finCarrera <= '0';
+              CASE Temporizador IS
+                WHEN "0000000000" =>
+                  PosicionD <= 0;
+                  PosicionI <= 5;
+                WHEN "0000001000" => -- 500ms
+                  PosicionD <= 1;
+                  PosicionI <= 6;
+                WHEN "0000001010" => -- 1500ms
+                  PosicionD <= 2;
+                  PosicionI <= 7;
+                WHEN "0000001100" => -- 3000ms
+                  PosicionD <= 3;
+                  PosicionI <= 8;
+                WHEN "0000010000" => -- 3250ms
+                  PosicionD <= 4;
+                  PosicionI <= 9;
+                WHEN "0000010100" => --         0000010100
+                  PosicionD <= 5;
+                  PosicionI <= 10;
+                WHEN "0000011001" => -- 4100ms    0000011001
+                  PosicionD <= 6;
+                  PosicionI <= 11;
+                WHEN "0000011110" => -- 4500ms    0000011110
+                  PosicionD <= 7;
+                  PosicionI <= 12;
+                WHEN "0000100011" => -- 4750ms    0000100011
+                  PosicionD <= 8;
+                  PosicionI <= 13;
+                WHEN "0000101000" => -- 5000ms     0000101000
+                  PosicionD <= 9;
+                  PosicionI <= 14;
+                WHEN "0000101101" => -- 5250ms      0000101101
+                  PosicionD <= 10;
+                  PosicionI <= 15;
+                WHEN "0000110010" => -- 5500ms      0000110010
+                  PosicionD <= 9;
+                  PosicionI <= 14;
+                WHEN "0000110111" => -- 5750ms      0000110111
+                  PosicionD <= 8;
+                  PosicionI <= 13;
+                WHEN "0000111100" => -- 6000ms      0000111100
+                  PosicionD <= 7;
+                  PosicionI <= 12;
+                WHEN "0001000001" => -- 6250ms      0001000001
+                  PosicionD <= 6;
+                  PosicionI <= 11;
+                WHEN "0001000110" => -- 7000ms      0001000110
+                  PosicionD <= 5;
+                  PosicionI <= 10;
+                WHEN "0001001011" => -- 7500ms      0001001011
+                  PosicionD <= 4;
+                  PosicionI <= 9;
+                WHEN "0001010000" => -- 8000ms      0001010000
+                  PosicionD <= 3;
+                  PosicionI <= 8;
+                WHEN "0001010101" => -- 9000ms      0001010101    
+                  PosicionD <= 2;
+                  PosicionI <= 7;
+                WHEN "0001011010" => -- 10000ms     0001011010
+                  PosicionD <= 1;
+                  PosicionI <= 6;
+                WHEN "0001011111" => -- 10250ms     0001011111
+                  PosicionD <= 0;
+                  PosicionI <= 5;
+                  finCarrera <= '1';
+                WHEN OTHERS =>
+                  
+                END CASE;
+            WHEN "010" => -- LVL 2,  en este case va el codigo de la carretera aleatoria de Adri
+                 
+                 
+                 IF (PosicionD_Aux < 5) THEN  --Condición de estar en el límite derecho
+                    PosicionD <= 0;
+                    PosicionI <= 5;                 
+                 ELSIF (PosicionI_Aux > 15) THEN --Condición de estar en el límite izquierdo
+                    PosicionD <= 10;
+                    PosicionI <= 15;
+                 ELSE
+                    PosicionD <= PosicionD_Aux;
+                    PosicionI <= PosicionI_Aux;
+                 END IF;
+                 
+                           
+             WHEN OTHERS =>
+    END CASE;
+    END IF;
 
-----Novena iteración
-
---FlagDerPos <= "100";
---FlagDerLado <= '1';
---FlagIzqPos <= "110";
---FlagIzqLado <= '0';
-
---WAIT for 3000 ms;
-
-----Décima iteración
-
---FlagDerPos <= "100";
---FlagDerLado <= '0';
---FlagIzqPos <= "111";
---FlagIzqLado <= '1';
-
---WAIT for 3000 ms;
-
-----Undécima iteración
-
---FlagDerPos <= "101";
---FlagDerLado <= '1';
---FlagIzqPos <= "111";
---FlagIzqLado <= '0';
-
---WAIT for 3000 ms;
-
-END IF;
-END PROCESS;
+  END PROCESS;
+  
 END ARCHITECTURE;
