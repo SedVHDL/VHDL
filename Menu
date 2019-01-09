@@ -1,5 +1,4 @@
-
-        library IEEE;
+library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY Menu IS 
@@ -7,7 +6,7 @@ ENTITY Menu IS
         clk, rst: IN STD_LOGIC;
         BotonI, BotonD, BotonC: IN STD_LOGIC;
         Fin_carretera: IN STD_LOGIC;
-        Fracaso: IN STD_LOGIC;
+        fracaso: IN STD_LOGIC;
         Estado_out: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
         Lvl_sel: OUT STD_LOGIC
         );
@@ -52,58 +51,62 @@ END PROCESS;
 DECODIFICADOR_ESTADO_SIGUIENTE: PROCESS(e_actual, BotonC, selector_nivel, Fin_carretera, Fracaso)
 BEGIN
     CASE e_actual IS
-        WHEN "000"=>
+        WHEN "000"=> --Elegir nivel
             IF(selector_nivel = '0' AND BotonC = '1') THEN --Desde el menú principal, si se selecciona por encima el nivel y se pulsa el botón central, se pasa a uno de los niveles.
                 e_siguiente <= "001"; --Vas al LVL1
             
             ELSIF(selector_nivel = '1' AND BotonC = '1') THEN
                 e_siguiente <= "010"; --Vas al LVL2
-                ELSE
-                    e_siguiente <= "000"; --Sigues elegiendo
+                
+            ELSE
+                e_siguiente <= "000"; --Sigues elegiendo
+                
             END IF;
-        WHEN "001"=>
+            
+        WHEN "001"=> --Nivel 1
             IF(fin_carretera = '1' AND fracaso = '0') THEN --Estando en uno de los niveles, se comprueba si se ha superado el nivel (paso a S3) o se ha perdido la partida (paso a S4)
                 e_siguiente <= "100"; --Has ganado
-            ELSIF(Fracaso = '1') THEN
-                e_siguiente <= "011"; --HAs perido
-                ELSE
-                    e_siguiente <= "001"; --Sigues conduciendo
+            ELSIF(fracaso = '1') THEN
+                e_siguiente <= "011"; --Has perido
+            ELSE
+                e_siguiente <= "001"; --Sigues conduciendo
             END IF;
-        WHEN "010"=>
+            
+        WHEN "010"=> -- nivel 2
             IF(fin_carretera = '1' AND fracaso = '0') THEN
                 e_siguiente <= "100"; -- Has ganado 
-            ELSIF(Fracaso = '1') THEN
+            ELSIF(fracaso = '1') THEN
                 e_siguiente <= "011"; -- Has perdido Tony
-                ELSE
-                    e_siguiente <= "010"; -- Sigues conduciendo
-            END IF;
-        WHEN "011"=> --Tanto el mensaje de victoria como de derrota se "quita" volviendo a pulsar el botón central, regresando al menú principal.
-            IF(BotonC = '1') THEN
-                e_siguiente <= "000";
             ELSE
-                e_siguiente <= "011";
+                e_siguiente <= "010"; -- Sigues conduciendo
             END IF;
-        WHEN "100"=>
+        WHEN "011"=> --Perder
             IF(BotonC = '1') THEN
-                e_siguiente <= "000";
+                e_siguiente <= "000"; --Ir a menu
             ELSE
-                e_siguiente <= "100";
+                e_siguiente <= "011"; --Seguir viendo el mensaje de que has perdido Tony
+            END IF;
+        WHEN "100"=> --Ganar
+            IF(BotonC = '1') THEN
+                e_siguiente <= "000"; --Ir a menu
+            ELSE
+                e_siguiente <= "100"; -- Seguir viendo el mensaje de ganar
             END IF;
         WHEN OTHERS =>
     END CASE;
 END PROCESS;
 
-Seleccion_Nivel: PROCESS(BotonI, BotonD, e_actual)
+Seleccion_Nivel: PROCESS(BotonI, BotonD, e_actual) --Process que opera el selector_nivel
 BEGIN
-    IF (e_actual = "000") THEN
         IF (BotonD = '1' AND BotonI = '0') THEN
-            selector_nivel <= '1';
+            selector_nivel <= '1'; --lvl2
+            
         ELSIF (BotonD = '0' AND BotonI = '1') THEN
-            selector_nivel <= '0';
+            selector_nivel <= '0'; --lvl1
         ELSE
-            selector_nivel <= selector_nivel;
+            selector_nivel <= selector_nivel; --igualamo a ella misma
         END IF;
-    END IF;
-    lvl_sel <= selector_nivel;
+    lvl_sel <= selector_nivel; --igualamos interna a externa
 END PROCESS;
+
 END ARCHITECTURE;
