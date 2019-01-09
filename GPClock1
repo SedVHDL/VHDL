@@ -1,0 +1,43 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity GPClock is
+generic (TIMER, WIDTH: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
+port (
+    clk: in STD_LOGIC;
+    rst: in STD_LOGIC;
+    Selector: out STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+);
+end GPClock;
+
+architecture behav of GPClock is
+
+    constant max_refresh_count: INTEGER := TIMER; 
+    signal refresh_count: INTEGER range 0 to max_refresh_count;
+    signal refresh_state: STD_LOGIC_VECTOR(WIDTH-1 downto 0) := (others => '0');
+	
+begin
+
+    gen_clock: process(clk, rst)
+    begin
+        if clk'event and clk='1' then
+          IF (rst = '0') THEN
+            refresh_count <= 0;
+            refresh_state <= (others => '0');
+          
+          ELSE
+	    -- contador TIMER (Para cambiar las paredes de displays)
+	    
+              if (refresh_count < max_refresh_count) then
+              refresh_count <= refresh_count + 1;
+              
+              else
+              refresh_state <= refresh_state + 1;
+              refresh_count <= 0; 
+              end if; 
+          END IF;
+        end if; 
+        Selector <= refresh_state;
+    end process; 
+END behav;
