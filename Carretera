@@ -23,7 +23,7 @@ port (
 end COMPONENT;
 
 COMPONENT SelectorAleatorio is -- Generador de las posiciones aleatorias
-    GENERIC (WIDTH: INTEGER := 2);
+    GENERIC (WIDTH: INTEGER := 4);
     PORT (
         clk     : IN STD_LOGIC;
         rst: IN STD_LOGIC;
@@ -34,7 +34,7 @@ COMPONENT SelectorAleatorio is -- Generador de las posiciones aleatorias
 END COMPONENT;
 
 SIGNAL Temporizador: STD_LOGIC_VECTOR (9 DOWNTO 0);
-SIGNAL Temporizador2: STD_LOGIC_VECTOR (1 DOWNTO 0);
+SIGNAL Temporizador2: STD_LOGIC_VECTOR (3 DOWNTO 0);
 SIGNAL PosicionD_Aux: INTEGER RANGE 0 TO 10 := 0;
 SIGNAL PosicionI_Aux: INTEGER RANGE 5 TO 15 := 5;
 SIGNAL Maestro: STD_LOGIC;
@@ -48,7 +48,7 @@ inst_GPClock_Carretera1: GPClock -- Divisor de frecuencia para el LVL 1
      PORT MAP(Selector => Temporizador, clk => clk, rst => rst);
      
 inst_GPClock_Carretera2: GPClock -- Divisor de frecuencia para el LVL 2
-          GENERIC MAP (TIMER => 50000000, WIDTH => 2)
+          GENERIC MAP (TIMER => 50000000, WIDTH => 4)
           PORT MAP(Selector => Temporizador2, clk => clk, rst => rst);
 
 inst_SelectorAleatorio: SelectorAleatorio
@@ -143,20 +143,59 @@ inst_SelectorAleatorio: SelectorAleatorio
                 END CASE;
             WHEN "010" => -- LVL 2,  en este case va el codigo de la carretera aleatoria de Adri
                  
-                 
+               finCarrera <= '0';
+
                  CASE Temporizador2 IS
-                    WHEN "00" =>
+                    WHEN "0000" =>
                         PosicionD <= PosicionD_aux;
                         PosicionI <= PosicionI_aux;
-                    WHEN "01" =>
+                    WHEN "0001" =>
                         PosicionD <= PosicionD_aux;
                         PosicionI <= PosicionI_aux;
-                    WHEN "10" =>
+                    WHEN "0010" =>
                         PosicionD <= PosicionD_aux;
                         PosicionI <= PosicionI_aux;
-                    WHEN "11" =>
+                    WHEN "0011" =>
                         PosicionD <= PosicionD_aux;
                         PosicionI <= PosicionI_aux;
+                    WHEN "0100" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "0101" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "0110" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "0111" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1000" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1001" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1010" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1011" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1100" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1101" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1110" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                    WHEN "1111" =>
+                        PosicionD <= PosicionD_aux;
+                        PosicionI <= PosicionI_aux;
+                        finCarrera <= '1';
+
                     WHEN OTHERS =>
                     
                   END CASE;         
