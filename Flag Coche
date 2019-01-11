@@ -7,6 +7,7 @@ entity FlagCoche is
       Port (
             clk, rst: IN STD_LOGIC;
             BotonIzq, BotonDer: IN STD_LOGIC;
+            Estado: IN STD_LOGIC_VECTOR(2 downto 0);
             FlagC: OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
        );
 end FlagCoche;
@@ -17,15 +18,24 @@ SIGNAL FlagC_aux: UNSIGNED (2 DOWNTO 0) := "001";
 
 begin
 
-PROCESS (Clk)
+PROCESS (Clk,Estado)
 BEGIN
-    IF (rst = '0') THEN
+    IF (rst = '0') THEN --Importante resetear aqui el Flag del coche para que no de conflictos cuando acabemos el nivel y volvamos a jugar
         FlagC_aux <= "001";
     ELSIF(clk'event AND clk = '1') THEN
-        IF (BotonIzq = '1' AND BotonDer = '0') THEN
-            FlagC_aux <= FlagC_aux + 1;
-        ELSIF (BotonIzq = '0' AND BotonDer = '1') THEN
-            FlagC_aux <= FlagC_aux - 1;
+        IF (Estado = "001") THEN -- Para el LVL 1
+            IF (BotonIzq = '1' AND BotonDer = '0') THEN
+                FlagC_aux <= FlagC_aux + 1;
+            ELSIF (BotonIzq = '0' AND BotonDer = '1') THEN
+                FlagC_aux <= FlagC_aux - 1;
+            END IF;
+        END IF;
+        IF (Estado = "010") THEN -- Para el LVL 2
+            IF (BotonIzq = '1' AND BotonDer = '0') THEN
+                FlagC_aux <= FlagC_aux + 1;
+            ELSIF (BotonIzq = '0' AND BotonDer = '1') THEN
+                FlagC_aux <= FlagC_aux - 1;
+            END IF;
         END IF;
     END IF;
 END PROCESS;
@@ -33,4 +43,3 @@ END PROCESS;
 FlagC <= std_logic_vector(FlagC_aux);
 
 end Behavioral;
-
