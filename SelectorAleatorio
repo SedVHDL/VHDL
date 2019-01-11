@@ -2,7 +2,7 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 --Este código generará un bit pseudo-aleatorio el cual dirá si las paredes se mueven a la derecha o izquierda, en la entidad Carretera
 ENTITY SelectorAleatorio is
-    GENERIC (WIDTH: INTEGER := 2);
+    GENERIC (WIDTH: INTEGER := 4);
     PORT (
         clk     : IN STD_LOGIC;
         rst: IN STD_LOGIC;
@@ -23,18 +23,16 @@ port (
 );
 end COMPONENT;
 
---SIGNAL VectorAux: STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) := "01110010";
---SIGNAL Bit_Aux: STD_LOGIC := '0';
-SIGNAL Clk2seg: STD_LOGIC_VECTOR (1 DOWNTO 0);
+SIGNAL Clk2seg: STD_LOGIC_VECTOR (3 DOWNTO 0);
 SIGNAL Maestro: STD_LOGIC;
 --
 BEGIN 
 
 inst_GPClock_Carretera1: GPClock -- Divisor de frecuencia para el LVL 1
-     GENERIC MAP (TIMER => 12500000, WIDTH => 2)
+     GENERIC MAP (TIMER => 50000000, WIDTH => 4)
      PORT MAP(Selector => Clk2seg, clk => clk, rst => rst);
 
-Maestro <= Clk2seg (WIDTH - 1) XOR Clk2seg (WIDTH - 2);
+Maestro <= Clk2seg (WIDTH - 1) XOR Clk2seg (WIDTH - 2) XOR Clk2seg (WIDTH - 3) XOR Clk2seg (WIDTH - 4);
 
 PROCESS (Clk2seg, rst)
 
