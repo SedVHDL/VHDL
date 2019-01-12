@@ -23,6 +23,9 @@ BEGIN
     IF (rst = '0') THEN --Importante resetear aqui el Flag del coche para que no de conflictos cuando acabemos el nivel y volvamos a jugar
         FlagC_aux <= "001";
     ELSIF(clk'event AND clk = '1') THEN
+        IF (Estado = "000") THEN
+            FlagC_aux <= "001";
+        END IF;
         IF (Estado = "001") THEN -- Para el LVL 1
             IF (BotonIzq = '1' AND BotonDer = '0') THEN
                 FlagC_aux <= FlagC_aux + 1;
