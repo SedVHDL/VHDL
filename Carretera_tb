@@ -1,36 +1,41 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity Test_Carretera is
-end Test_Carretera;
+entity Carretera_tb is
+--  Port ( );
+end Carretera_tb;
 
-architecture Behavioral of Test_Carretera is
-        COMPONENT Carretera
-            PORT(  rst, clk: IN std_logic;
-               FlagIzqPos, FlagDerPos: OUT std_logic_vector(2 downto 0);
-               FlagIzqLado, FlagDerLado: OUT std_logic 
-            );
-            END COMPONENT;
-            SIGNAL rst_tb: std_logic;
-            SIGNAL clk_tb: std_logic:='0';
-            SIGNAL SFlagIzqPos_tb, SFlagDerPos_tb: std_logic_vector(2 downto 0);
-            SIGNAL SFlagIzqLado_tb, SFlagDerLado_tb: std_logic; 
-BEGIN
-uut: Carretera PORT MAP(
+architecture Behavioral of Carretera_tb is
+
+SIGNAL rst_tb, clk_tb: STD_LOGIC := '0';
+SIGNAL Estado_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
+SIGNAL PosicionI_tb, PosicionD_tb: INTEGER;
+SIGNAL FinCarrera_tb: STD_LOGIC;
+
+COMPONENT Carretera is
+  PORT( 
+        rst, clk: IN std_logic;
+        Estado: IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+        PosicionI: OUT INTEGER RANGE 5 to 15; -- Posicion del limite Izquierdo
+        PosicionD: OUT INTEGER RANGE 0 to 10; -- Posicion del limite Derecho
+        finCarrera: OUT STD_LOGIC
+  );
+end COMPONENT;
+
+begin
+
+inst_Carretera: Carretera
+    PORT MAP (
         rst => rst_tb,
         clk => clk_tb,
-        FlagIzqPos => SFlagIzqPos_tb,
-        FlagDerPos => SFlagDerPos_tb,
-        FlagIzqLado => SFlagIzqLado_tb,
-        FlagDerLado => SFlagDerLado_tb
-);
+        Estado => Estado_tb,
+        PosicionI => PosicionI_tb,
+        PosicionD => PosicionD_tb,
+        finCarrera => FinCarrera_tb
+        );
 
-clk_tb <= not clk_tb after 50ns;
-
-PROCESS
-BEGIN 
-
-END PROCESS;
-
+rst_tb <= '1';
+Estado_tb <= "010";
+clk_tb <= not (clk_tb) after 10 ns;
 
 end Behavioral;
