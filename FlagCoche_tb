@@ -1,74 +1,68 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-
-entity FlagCoche_tb is
+entity Flag_Coche_tb is
 --  Port ( );
-end FlagCoche_tb;
+end Flag_Coche_tb;
 
-architecture Behavioral of FlagCoche_tb is
+architecture Behavioral of Flag_Coche_tb is
+
+SIGNAL clk_tb, rst_tb: STD_LOGIC := '0';
+SIGNAL BotonIzq_tb, BotonDer_tb: STD_LOGIC := '0';
+SIGNAL Estado_tb, FlagC_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
+
 
 COMPONENT FlagCoche is
       Port (
             clk, rst: IN STD_LOGIC;
             BotonIzq, BotonDer: IN STD_LOGIC;
+            Estado: IN STD_LOGIC_VECTOR(2 downto 0);
             FlagC: OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
        );
-end COMPONENT;
+END COMPONENT;
 
-SIGNAL clk_tb, rst_tb: STD_LOGIC := '0';
-SIGNAL BotonI_tb, BotonD_tb: STD_LOGIC := '0';
-SIGNAL FlagC_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
+begin
 
-BEGIN
-
-inst_Flag: FlagCoche PORT MAP (
-                    
-             clk => clk_tb,
-             rst => rst_tb,
-             BotonIzq => BotonI_tb,
-             BotonDer => BotonD_tb,
-             FlagC => FlagC_tb      
-);
-
-rst_tb <= '1', '0' after 50 ns;
-clk_tb <= not (clk_tb) after 50 ns;
-
+inst_FlagCoche: FlagCoche
+       PORT MAP (
+            clk => clk_tb,
+            rst => rst_tb,
+            BotonIzq => BotonIzq_tb,
+            BotonDer => BotonDer_tb,
+            Estado => Estado_tb,
+            FlagC => FlagC_tb);
+            
+clk_tb <= not(clk_tb) after 10 ms;
+rst_tb <= '1' after 5 ms;
+            
 PROCESS
 BEGIN
 
-wait for 10 ns;
+wait for 10 ms;
+Estado_tb <= "001";
+BotonIzq_tb <= '1';
+BotonDer_Tb <= '0';
 
-BotonI_tb <= '1';
-BotonD_tb <= '0';
+wait for 40 ms;
+Estado_tb <= "001";
+BotonIzq_tb <= '0';
+BotonDer_Tb <= '1';
 
-wait for 100 ns;
+wait for 80 ms;
+Estado_tb <= "010";
+BotonIzq_tb <= '1';
+BotonDer_Tb <= '0';
 
-BotonI_tb <= '1';
-BotonD_tb <= '0';
+wait for 100 ms;
+Estado_tb <= "010";
+BotonIzq_tb <= '0';
+BotonDer_Tb <= '1';
 
-wait for 100 ns;
+wait for 140 ms;
+Estado_tb <= "001";
+BotonIzq_tb <= '1';
+BotonDer_Tb <= '0';
 
-BotonI_tb <= '1';
-BotonD_tb <= '0';
-
-wait for 100 ns;
-
-BotonI_tb <= '0';
-BotonD_tb <= '1';
-
-wait for 100 ns;
-
-BotonI_tb <= '0';
-BotonD_tb <= '1';
-
-wait for 100 ns;
-
-BotonI_tb <= '0';
-BotonD_tb <= '0';
-wait for 100 ns;
-
-BotonI_tb <= '0';
-BotonD_tb <= '0';
 END PROCESS;
+
 end Behavioral;
