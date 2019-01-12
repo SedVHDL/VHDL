@@ -1,0 +1,75 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity CodificadorCarrtera_tb is
+--  Port ( );
+end CodificadorCarrtera_tb;
+
+architecture Behavioral of CodificadorCarrtera_tb is
+
+SIGNAL clk_tb, rst_tb: STD_LOGIC := '0';
+SIGNAL PosicionI_tb, PosicionD_tb: INTEGER;
+SIGNAL FlagIP_tb, FlagDP_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
+SIGNAL FlagIL_tb, FlagDL_tb: STD_LOGIC;
+
+COMPONENT CodificadorCarretera is
+  PORT( 
+        rst, clk: IN std_logic;
+        PosicionI: IN INTEGER RANGE 5 to 15; -- Posicion del limite izquierdo a codificar
+        PosicionD: IN INTEGER RANGE 0 to 10; -- Posicion del limite derecho a codificar
+        
+        --Definimos 4 salidas, dos para las dos posiciones de las paredes y otras dos para, dentro de cada posición, el ladoi izquierdo o derecho de cada pared.
+        FlagIzqPos: OUT std_logic_vector(2 downto 0); 
+        FlagDerPos: OUT std_logic_vector(2 downto 0); 
+        FlagIzqLado: OUT std_logic;
+        FlagDerLado: OUT std_logic 
+  );
+END COMPONENT;
+
+
+begin
+
+inst_CodificadorC: CodificadorCarretera
+    PORT MAP(
+        rst => rst_tb,
+        clk => clk_tb,
+        PosicionI => PosicionI_tb,
+        Posiciond => PosicionD_tb,
+        FlagIzqPos => FlagIP_tb,
+        FlagDerPos => FlagDP_tb,
+        FlagIzqLado => FlagIL_tb,
+        FlagDerLado => FlagDL_tb);
+        
+clk_tb <= not(clk_tb) after 10 ms;
+rst_tb <= '1' after 10 ms;
+
+PROCESS
+BEGIN
+
+wait for 10 ms;
+PosicionI_tb <= 5;
+PosicionD_tb <= 0;
+wait for 30 ms;
+PosicionI_tb <= 6;
+PosicionD_tb <= 1;
+wait for 50 ms;
+PosicionI_tb <= 7;
+PosicionD_tb <= 2;
+wait for 70 ms;
+PosicionI_tb <= 6;
+PosicionD_tb <= 1;
+wait for 90 ms;
+PosicionI_tb <= 7;
+PosicionD_tb <= 2;
+wait for 110 ms;
+PosicionI_tb <= 8;
+PosicionD_tb <= 3;
+wait for 130 ms;
+PosicionI_tb <= 9;
+PosicionD_tb <= 4;
+
+
+
+END PROCESS;
+
+end Behavioral;
