@@ -26,102 +26,106 @@ BEGIN
 
 PROCESS(clk,lvlsel)
 BEGIN
- IF (clk'event AND clk = '1') THEN
- 
-     CASE EstadoIN IS
-        WHEN "000" => --Estado de MENU (Escribe en los displays la seleccion de niveles)
-            IF (SelectorIN = "111" OR SelectorIN = "101") THEN
-                Segmentos <= "11110001"; -- "L"
-                
-            ELSIF (SelectorIN = "110") THEN
-                Segmentos <= "11000001"; -- "U"
-                
-            ELSIF (SelectorIN = "011") THEN
-                IF(lvlsel = '0') THEN
-                    Segmentos <= "11001011"; -- ".1"
-                ELSE
-                    Segmentos <= "11001111"; -- " 1"
-                END IF;
-                
-            ELSIF (SelectorIN = "010") THEN
-                IF (lvlsel = '0') THEN
-                    Segmentos <= "11111011"; --". "
-                ELSE
-                    Segmentos <= "11101111"; --" ."
-                END IF;
-                
-            ELSIF (SelectorIN = "001") THEN
-                    Segmentos <= "10010010"; --"2"
-                    
-            ELSIF (SelectorIN = "000") THEN
-                IF (lvlsel = '1') THEN
-                    Segmentos <= "11111011"; --". "
-                ELSE
-                    Segmentos <= "11111111"; -- "  "
-                END IF;
-                
-            ELSE
-                Segmentos <= "11111111";
-            END IF;
-            
-        WHEN "011" => --Estado de GAMEOVER (Escribe en los displays la palabra de gameover)
-            IF (SelectorIN = "101") THEN
-                Segmentos <= "10111000"; -- "F"
-            ELSIF (SelectorIN = "100") THEN
-                Segmentos <= "10001000"; -- "A"
-            ELSIF (SelectorIN = "011") THEN
-                Segmentos <= "11001111"; -- "I"
-            ELSIF (SelectorIN = "010") THEN
-                Segmentos <= "11110001"; -- "L"
-            ELSE
-                Segmentos <= "11111111"; -- "  "
-            END IF;
-        WHEN "100" => --Estado de VICTORIA (Escribe en los displays la palabra de victoria)
-            IF (SelectorIN = "101") THEN
-                Segmentos <= "10100001"; -- "G"
-            ELSIF (SelectorIN = "100") THEN
-                Segmentos <= "10000001"; -- "O"
-            ELSIF (SelectorIN = "011") THEN
-                Segmentos <= "10000001"; -- "O"
-            ELSIF (SelectorIN = "010") THEN
-                Segmentos <= "11000010"; -- "d"
-            ELSE
-                Segmentos <= "11111111"; -- "  "
-            END IF;
-        WHEN OTHERS => --Estados de LVL1 y LVL2 (Escribe en los displays El coche con la carretera)
-     
-        IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
-            IF(flagIlado = '0') THEN
-                Segmentos <= "11111000";  -- ":-"
-            ELSE
-                Segmentos <= "11111111"; --GAMEOVER
-            END IF;
-        ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
-            IF(flagIlado = '0') THEN
-                Segmentos <= "11001110"; -- "-:"
-            ELSE
-                Segmentos <= "11111111"; --GAMEOVER
-            END IF;
-        ELSIF (SelectorIN = flagIpos AND SelectorIN /= flagC ) THEN
-            IF (flagIlado = '1') THEN
-                Segmentos <= "11001111"; -- " :"
-            ELSE
-                Segmentos <= "11111001"; -- ": "
-            END IF;
-        ELSIF (SelectorIN = flagDpos AND SelectorIN /= flagC ) THEN
-            IF (flagDlado = '1') THEN
-                Segmentos <= "11001111"; -- " :" "11001111"
-            ELSE
-                Segmentos <= "11111001"; -- ": " ""11111001""
-            END IF;
-        ELSIF (SelectorIN = flagC) THEN
-            Segmentos <= "11111110"; -- "-"
-        ELSE
-            Segmentos <= "11111111";
-        END IF;
+
+    IF (rst = '0') THEN
+        Segmentos <= "11111111";
         
-     END CASE;
- END IF;    
+    ELSIF (clk'event AND clk = '1') THEN
+ 
+             CASE EstadoIN IS
+                WHEN "000" => --Estado de MENU (Escribe en los displays la seleccion de niveles)
+                    IF (SelectorIN = "111" OR SelectorIN = "101") THEN
+                        Segmentos <= "11110001"; -- "L"
+                        
+                    ELSIF (SelectorIN = "110") THEN
+                        Segmentos <= "11000001"; -- "U"
+                        
+                    ELSIF (SelectorIN = "011") THEN
+                        IF(lvlsel = '0') THEN
+                            Segmentos <= "11001011"; -- ".1"
+                        ELSE
+                            Segmentos <= "11001111"; -- " 1"
+                        END IF;
+                        
+                    ELSIF (SelectorIN = "010") THEN
+                        IF (lvlsel = '0') THEN
+                            Segmentos <= "11111011"; --". "
+                        ELSE
+                            Segmentos <= "11101111"; --" ."
+                        END IF;
+                        
+                    ELSIF (SelectorIN = "001") THEN
+                            Segmentos <= "10010010"; --"2"
+                            
+                    ELSIF (SelectorIN = "000") THEN
+                        IF (lvlsel = '1') THEN
+                            Segmentos <= "11111011"; --". "
+                        ELSE
+                            Segmentos <= "11111111"; -- "  "
+                        END IF;
+                        
+                    ELSE
+                        Segmentos <= "11111111";
+                    END IF;
+                    
+                WHEN "011" => --Estado de GAMEOVER (Escribe en los displays la palabra de gameover)
+                    IF (SelectorIN = "101") THEN
+                        Segmentos <= "10111000"; -- "F"
+                    ELSIF (SelectorIN = "100") THEN
+                        Segmentos <= "10001000"; -- "A"
+                    ELSIF (SelectorIN = "011") THEN
+                        Segmentos <= "11001111"; -- "I"
+                    ELSIF (SelectorIN = "010") THEN
+                        Segmentos <= "11110001"; -- "L"
+                    ELSE
+                        Segmentos <= "11111111"; -- "  "
+                    END IF;
+                WHEN "100" => --Estado de VICTORIA (Escribe en los displays la palabra de victoria)
+                    IF (SelectorIN = "101") THEN
+                        Segmentos <= "10100001"; -- "G"
+                    ELSIF (SelectorIN = "100") THEN
+                        Segmentos <= "10000001"; -- "O"
+                    ELSIF (SelectorIN = "011") THEN
+                        Segmentos <= "10000001"; -- "O"
+                    ELSIF (SelectorIN = "010") THEN
+                        Segmentos <= "11000010"; -- "d"
+                    ELSE
+                        Segmentos <= "11111111"; -- "  "
+                    END IF;
+                WHEN OTHERS => --Estados de LVL1 y LVL2 (Escribe en los displays El coche con la carretera)
+             
+                IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
+                    IF(flagIlado = '0') THEN
+                        Segmentos <= "11111000";  -- ":-"
+                    ELSE
+                        Segmentos <= "11111111"; --GAMEOVER
+                    END IF;
+                ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
+                    IF(flagIlado = '0') THEN
+                        Segmentos <= "11001110"; -- "-:"
+                    ELSE
+                        Segmentos <= "11111111"; --GAMEOVER
+                    END IF;
+                ELSIF (SelectorIN = flagIpos AND SelectorIN /= flagC ) THEN
+                    IF (flagIlado = '1') THEN
+                        Segmentos <= "11001111"; -- " :"
+                    ELSE
+                        Segmentos <= "11111001"; -- ": "
+                    END IF;
+                ELSIF (SelectorIN = flagDpos AND SelectorIN /= flagC ) THEN
+                    IF (flagDlado = '1') THEN
+                        Segmentos <= "11001111"; -- " :" "11001111"
+                    ELSE
+                        Segmentos <= "11111001"; -- ": " ""11111001""
+                    END IF;
+                ELSIF (SelectorIN = flagC) THEN
+                    Segmentos <= "11111110"; -- "-"
+                ELSE
+                    Segmentos <= "11111111";
+                END IF;
+                
+             END CASE;
+         END IF;    
 END PROCESS;
 
 PROCESS(clk,SelectorIN)
@@ -149,46 +153,36 @@ BEGIN
 END PROCESS;
 
 verificacion_fracaso: PROCESS(EstadoIN, flagDpos, flagIpos, flagC, flagIlado, flagDlado, SelectorIn)
-BEGIN --Se propone cambiar este process por un CASE en vez de condicionales
-    IF (EstadoIN = "001") THEN
-        IF (flagC < FlagDpos) THEN
-            fracaso <= '1';
-        ELSIF (flagC > FlagIpos) THEN
-            fracaso <= '1';
-        ELSIF (SelectorIN = flagIpos AND SelectorIN = flagC) THEN
-            IF(flagIlado = '1') THEN
-                fracaso <= '1';
-            END IF;
---        ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN --Condición de perder si pásaba por encima de la parede derecha, daba error por eso está comentada
---            IF(flagDlado = '0') THEN
---                fracaso <= '1';
---            END IF;
-        ELSE
-            fracaso <= '0';
-        END IF;
-    END IF;
-   
-    IF (EstadoIN = "010") THEN
-        IF (flagC < FlagDpos) THEN
-            fracaso <= '1';
-        ELSIF (flagC > FlagIpos) THEN
-            fracaso <= '1';
-        ELSIF (SelectorIN = flagIpos AND SelectorIN = flagC) THEN
-            IF(flagIlado = '1') THEN
-                fracaso <= '1';
-            END IF;
---        ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN --Condición de perder si pásaba por encima de la parede derecha, daba error por eso está comentada
---            IF(flagDlado = '0') THEN
---                fracaso <= '1';
---            END IF;
-        ELSE
-            fracaso <= '0';
-        END IF;
-    END IF;
-
-    IF (EstadoIn = "000" OR EstadoIn = "011") THEN
-        fracaso <= '0';
-    END IF;
+BEGIN     
+    CASE EstadoIN IS
+            WHEN "001" =>
+                IF (flagC < FlagDpos) THEN
+                    fracaso <= '1';
+                ELSIF (flagC > FlagIpos) THEN
+                    fracaso <= '1';
+                ELSIF (SelectorIN = flagIpos AND SelectorIN = flagC) THEN
+                    IF(flagIlado = '1') THEN
+                        fracaso <= '1';
+                    END IF;
+                ELSE
+                    fracaso <= '0';
+                END IF;
+           
+            WHEN "010" =>
+                IF (flagC < FlagDpos) THEN
+                    fracaso <= '1';
+                ELSIF (flagC > FlagIpos) THEN
+                    fracaso <= '1';
+                ELSIF (SelectorIN = flagIpos AND SelectorIN = flagC) THEN
+                    IF(flagIlado = '1') THEN
+                        fracaso <= '1';
+                    END IF;
+                ELSE
+                    fracaso <= '0';
+                END IF;
+            WHEN OTHERS =>
+                fracaso <= '0';
+    END CASE;
 END PROCESS;
 
 END Behavioral;
