@@ -98,9 +98,6 @@ END PROCESS;
 
 Seleccion_Nivel: PROCESS(BotonI, BotonD, e_actual) --Process que opera el selector_nivel
 BEGIN
-    IF (rst = '0') THEN
-        selector_nivel <= '0';
-    ELSE    
         IF (BotonD = '1' AND BotonI = '0') THEN
             selector_nivel <= '1'; --lvl2
             
@@ -110,7 +107,6 @@ BEGIN
             selector_nivel <= selector_nivel; --igualamo a ella misma
         END IF;
     lvl_sel <= selector_nivel; --igualamos interna a externa
-    END IF;
 END PROCESS;
 
 END ARCHITECTURE;
