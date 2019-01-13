@@ -25,12 +25,8 @@ architecture Behavioral of refresh is
 BEGIN
 
 PROCESS(clk,lvlsel)
-BEGIN
-
-    IF (rst = '0') THEN
-        Segmentos <= "11111111";
-        
-    ELSIF (clk'event AND clk = '1') THEN
+BEGIN        
+    IF (clk'event AND clk = '1') THEN
  
              CASE EstadoIN IS
                 WHEN "000" => --Estado de MENU (Escribe en los displays la seleccion de niveles)
