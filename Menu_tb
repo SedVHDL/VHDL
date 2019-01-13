@@ -1,0 +1,105 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Menu_tb is
+--  Port ( );
+end Menu_tb;
+
+architecture Behavioral of Menu_tb is
+
+SIGNAL clk_tb, rst_tb: STD_LOGIC := '0';
+SIGNAL BotonI_tb, BotonD_tb, BotonC_tb, Fin_Carretera_tb, fracaso_tb: STD_LOGIC;
+SIGNAL Estado_out_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
+SIGNAL Lvl_sel_tb: STD_LOGIC;
+
+
+COMPONENT Menu IS 
+        PORT(
+        clk, rst: IN STD_LOGIC;
+        BotonI, BotonD, BotonC: IN STD_LOGIC;
+        Fin_carretera: IN STD_LOGIC;
+        fracaso: IN STD_LOGIC;
+        Estado_out: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+        Lvl_sel: OUT STD_LOGIC
+        );
+END COMPONENT;
+
+begin
+
+inst_Menu: Menu
+    PORT MAP (
+        clk => clk_tb,
+        rst => rst_tb,
+        BotonI => BotonI_tb,
+        BotonD => BotonD_tb,
+        BotonC => BotonC_tb,
+        Fin_Carretera => Fin_Carretera_tb,
+        Fracaso => Fracaso_tb,
+        Estado_out => Estado_out_tb,
+        Lvl_sel => Lvl_sel_tb);
+
+clk_tb <= not(clk_tb) after 10 ms;
+rst_tb <= '1' after 15 ms;
+
+PROCESS
+BEGIN
+
+wait for 10 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '1';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '0';
+
+wait for 20 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '0';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '1';
+
+wait for 30 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '1';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '0';
+
+wait for 40 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '1';
+BotonC_tb <= '0';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '0';
+
+wait for 50 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '1';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '0';
+
+wait for 60 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '0';
+Fin_Carretera_tb <= '1';
+Fracaso_tb <= '0';
+
+wait for 70 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '1';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '0';
+
+wait for 80 ms;
+BotonI_tb <= '0';
+BotonD_tb <= '0';
+BotonC_tb <= '0';
+Fin_Carretera_tb <= '0';
+Fracaso_tb <= '0';
+
+END PROCESS;
+
+end Behavioral;
