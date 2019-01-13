@@ -1,33 +1,31 @@
---Falta por probarlo.
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-ENTITY GPClock_tb IS
-END ENTITY;
+entity GPClock_tb is
+--  Port ( );
+end GPClock_tb;
 
-ARCHITECTURE Behav OF GPClock_tb IS
+architecture Behavioral of GPClock_tb is
 
-COMPONENT GPClock IS
-	generic (TIMER: INTEGER:= 100000);
-	port (
-    	clk: in STD_LOGIC;
-    	Temporizador: out INTEGER RANGE 0 TO 10000000 
-		);
-	
-END COMPONENT;
+SIGNAL clk_tb, rst_tb: STD_LOGIC := '0';
+SIGNAL Selector_tb: STD_LOGIC_VECTOR (2 DOWNTO 0);
 
-SIGNAL clk_tb: STD_LOGIC:='0';
-SIGNAL Temporizador_tb: INTEGER RANGE 0 TO 10000000:=0;
+COMPONENT GPClock is
+generic (TIMER, WIDTH: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
+port (
+    clk: in STD_LOGIC;
+    rst: in STD_LOGIC;
+    Selector: out STD_LOGIC_VECTOR (WIDTH-1 DOWNTO 0) --La señal que va a cambiar segun el reloj dividido.
+);
+end COMPONENT;
 
-BEGIN
-	uut:GPClock
-    	PORT MAP(
-        		clk => clk_tb,
-                Temporizador => Temporizador_tb
-                );
-                
-    clk_tb <= not clk_tb After 5ns;
-    
-END ARCHITECTURE;
+begin
+
+inst_GPClock_Carretera1: GPClock -- Divisor de frecuencia para el LVL 1
+     GENERIC MAP (TIMER => 100000000, WIDTH => 3)
+     PORT MAP(Selector => Selector_tb, clk => clk_tb, rst => rst_tb);
+     
+rst_tb <= '1' after 10 ms;
+clk_tb <= not(clk_tb) after 10ns;
+
+end Behavioral;
