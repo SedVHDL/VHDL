@@ -1,5 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
 
 entity Carretera is
   PORT( 
@@ -13,7 +16,7 @@ end Carretera;
 
 architecture Behavioral of Carretera is
 
-COMPONENT GPClock is --Componente para el juego de carretera LVL 1
+COMPONENT GPClock is --Componente para el juego de carretera 
 generic (TIMER, WIDTH: INTEGER); --FRECUENCIA DE NUESTROS RELOJES INDIVIDUALES
 port (
     clk: in STD_LOGIC;
@@ -22,22 +25,9 @@ port (
 );
 end COMPONENT;
 
-COMPONENT SelectorAleatorio is -- Generador de las posiciones aleatorias
-    GENERIC (WIDTH: INTEGER := 4);
-    PORT (
-        clk     : IN STD_LOGIC;
-        rst: IN STD_LOGIC;
-        EstadoIn: IN STD_LOGIC_VECTOR (2 DOWNTO 0);
-        PosicionD: OUT INTEGER;
-        PosicionI: OUT INTEGER
-        );
-END COMPONENT;
-
 SIGNAL Temporizador: STD_LOGIC_VECTOR (9 DOWNTO 0);
-SIGNAL Temporizador2: STD_LOGIC_VECTOR (3 DOWNTO 0);
-SIGNAL PosicionD_Aux: INTEGER RANGE 0 TO 10 := 0;
-SIGNAL PosicionI_Aux: INTEGER RANGE 5 TO 15 := 5;
-SIGNAL Maestro: STD_LOGIC;
+SIGNAL Temporizador2: STD_LOGIC_VECTOR (4 DOWNTO 0);
+SIGNAL Nivel: STD_LOGIC_VECTOR (1 DOWNTO 0);
 
 
 BEGIN
@@ -48,17 +38,14 @@ inst_GPClock_Carretera1: GPClock -- Divisor de frecuencia para el LVL 1
      PORT MAP(Selector => Temporizador, clk => clk, rst => rst);
      
 inst_GPClock_Carretera2: GPClock -- Divisor de frecuencia para el LVL 2
-          GENERIC MAP (TIMER => 50000000, WIDTH => 4)
+          GENERIC MAP (TIMER => 100000000, WIDTH => 5)
           PORT MAP(Selector => Temporizador2, clk => clk, rst => rst);
+          
+inst_GPClock_SelectorTipodeNive: GPClock -- Eligira el tipo de nivel que se jugara en el Lvl 2
+                    GENERIC MAP (TIMER => 2100000000, WIDTH => 2)
+                    PORT MAP(Selector => Nivel, clk => clk, rst => '1');
 
-inst_SelectorAleatorio: SelectorAleatorio
-    PORT MAP(
-             clk => clk,
-             rst => rst,
-             EstadoIn => Estado,
-             PosicionD => PosicionD_aux,
-             PosicionI => PosicionI_aux
-             );
+
 
   PROCESS (clk, rst)
 
@@ -141,65 +128,286 @@ inst_SelectorAleatorio: SelectorAleatorio
                 WHEN OTHERS =>
                   
                 END CASE;
-            WHEN "010" => -- LVL 2,  en este case va el codigo de la carretera aleatoria de Adri
-                 
-               finCarrera <= '0';
+            WHEN "010" => -- LVL 2,  Carretera pseudoaleatoria
+            
+                finCarrera <= '0';
 
-                 CASE Temporizador2 IS
-                    WHEN "0000" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0001" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0010" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0011" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0100" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0101" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0110" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "0111" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1000" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1001" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1010" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1011" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1100" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1101" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1110" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
-                    WHEN "1111" =>
-                        PosicionD <= PosicionD_aux;
-                        PosicionI <= PosicionI_aux;
+                CASE Temporizador2 IS
+                    WHEN "00000" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        END IF;
+                    WHEN "00001" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        END IF;             
+                    WHEN "00010" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        END IF;
+                    WHEN "00011" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        END IF;     
+                    WHEN "00100" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 0;
+                            PosicionI <= 5;
+                        END IF;
+                    WHEN "00101" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        END IF;             
+                    WHEN "00110" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        END IF;
+                    WHEN "00111" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        END IF;
+                    WHEN "01000" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        END IF;
+                    WHEN "01001" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        END IF;             
+                    WHEN "01010" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        END IF;
+                    WHEN "01011" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 7;
+                            PosicionI <= 12;
+                        END IF;     
+                    WHEN "01100" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 8;
+                            PosicionI <= 13;
+                        END IF;
+                    WHEN "01101" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 7;
+                            PosicionI <= 12;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 9;
+                            PosicionI <= 12;
+                        END IF;             
+                    WHEN "01110" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 10;
+                            PosicionI <= 14;
+                        END IF;
+                    WHEN "01111" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 4;
+                            PosicionI <= 9;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 9;
+                            PosicionI <= 14;
+                        END IF;                                   
+                    WHEN "10000" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 3;
+                            PosicionI <= 8;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 8;
+                            PosicionI <= 13;
+                        END IF;             
+                    WHEN "10001" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 7;
+                            PosicionI <= 12;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 2;
+                            PosicionI <= 7;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 7;
+                            PosicionI <= 12;
+                        END IF;
+                    WHEN "10010" =>                   
+                        IF (NIVEL = "00") THEN
+                            PosicionD <= 8;
+                            PosicionI <= 13;
+                        ELSIF (NIVEL = "01") THEN
+                            PosicionD <= 5;
+                            PosicionI <= 10;
+                        ELSIF (NIVEL = "10") THEN
+                            PosicionD <= 1;
+                            PosicionI <= 6;
+                        ELSIF (NIVEL = "11") THEN
+                            PosicionD <= 6;
+                            PosicionI <= 11;
+                        END IF;                                   
+                        
+                    WHEN "10100" =>
                         finCarrera <= '1';
-
+                        
                     WHEN OTHERS =>
-                    
-                  END CASE;         
-             WHEN OTHERS =>
+              
+                END CASE;
+
+            WHEN OTHERS =>
     END CASE;
     END IF;
 
