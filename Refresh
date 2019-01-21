@@ -24,7 +24,7 @@ architecture Behavioral of refresh is
 
 BEGIN
 
-PROCESS(clk,lvlsel)
+PROCESS(clk)
 BEGIN        
     IF (clk'event AND clk = '1') THEN
  
@@ -88,7 +88,7 @@ BEGIN
                     ELSE
                         Segmentos <= "11111111"; -- "  "
                     END IF;
-                WHEN OTHERS => --Estados de LVL1 y LVL2 (Escribe en los displays El coche con la carretera)
+                WHEN "001" => --Estados de LVL1 y LVL2 (Escribe en los displays El coche con la carretera)
              
                 IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
                     IF(flagIlado = '0') THEN
@@ -120,6 +120,39 @@ BEGIN
                     Segmentos <= "11111111";
                 END IF;
                 
+                WHEN "010" => --Estados de LVL1 y LVL2 (Escribe en los displays El coche con la carretera)
+                             
+                IF(SelectorIN = flagIpos AND SelectorIN = flagC) THEN
+                    IF(flagIlado = '0') THEN
+                        Segmentos <= "11111000";  -- ":-"
+                    ELSE
+                        Segmentos <= "11111111"; --GAMEOVER
+                    END IF;
+                ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
+                    IF(flagIlado = '0') THEN
+                        Segmentos <= "11001110"; -- "-:"
+                    ELSE
+                        Segmentos <= "11111111"; --GAMEOVER
+                    END IF;
+                ELSIF (SelectorIN = flagIpos AND SelectorIN /= flagC ) THEN
+                    IF (flagIlado = '1') THEN
+                        Segmentos <= "11001111"; -- " :"
+                    ELSE
+                        Segmentos <= "11111001"; -- ": "
+                    END IF;
+                ELSIF (SelectorIN = flagDpos AND SelectorIN /= flagC ) THEN
+                    IF (flagDlado = '1') THEN
+                        Segmentos <= "11001111"; -- " :" "11001111"
+                    ELSE
+                        Segmentos <= "11111001"; -- ": " ""11111001""
+                    END IF;
+                ELSIF (SelectorIN = flagC) THEN
+                    Segmentos <= "11111110"; -- "-"
+                ELSE
+                    Segmentos <= "11111111";
+                END IF;
+
+                WHEN others =>
              END CASE;
          END IF;    
 END PROCESS;
@@ -158,8 +191,16 @@ BEGIN
                     fracaso <= '1';
                 ELSIF (SelectorIN = flagIpos AND SelectorIN = flagC) THEN
                     IF(flagIlado = '1') THEN
-                        fracaso <= '1';
+                        fracaso <= '1'; -- Has perdido Tony
+                    ELSE
+                        fracaso <= '0';
                     END IF;
+                ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
+                    IF(flagDlado = '0') THEN
+                        fracaso <= '1'; -- Has perdido Tony
+                    ELSE
+                        fracaso <= '0';
+                     END IF;
                 ELSE
                     fracaso <= '0';
                 END IF;
@@ -171,11 +212,20 @@ BEGIN
                     fracaso <= '1';
                 ELSIF (SelectorIN = flagIpos AND SelectorIN = flagC) THEN
                     IF(flagIlado = '1') THEN
-                        fracaso <= '1';
+                        fracaso <= '1'; -- Has perdido Tony
+                    ELSE
+                        fracaso <= '0';
                     END IF;
+                ELSIF (SelectorIN = flagDpos AND SelectorIN = flagC) THEN
+                    IF(flagDlado = '0') THEN
+                        fracaso <= '1'; -- Has perdido Tony
+                    ELSE
+                        fracaso <= '0';
+                     END IF;
                 ELSE
                     fracaso <= '0';
-                END IF;
+                END IF;           
+
             WHEN OTHERS =>
                 fracaso <= '0';
     END CASE;
